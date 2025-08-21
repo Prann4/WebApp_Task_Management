@@ -45,7 +45,6 @@ app.get('/tasks/:id', (req, res) => {
 
 // Add new task
 app.post('/tasks', (req, res) => {
-  console.log("Received request to add task:", req.body);
   const newTask = {
     id: nextTaskId++,
     ...req.body

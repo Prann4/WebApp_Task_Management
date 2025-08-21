@@ -42,7 +42,6 @@ const App: React.FC = () => {
 
   const addTask = async (newTask: Omit<Task, 'id'>) => {
     try {
-      console.log("Adding new task:", newTask);
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -50,7 +49,6 @@ const App: React.FC = () => {
       });
       if (!res.ok) throw new Error('Failed to add task');
       const addedTask = await res.json();
-      console.log("Task added successfully:", addedTask);
       setTasks(prevTasks => [addedTask, ...prevTasks]);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to add task';
@@ -61,8 +59,6 @@ const App: React.FC = () => {
   
   const deleteTask = async (id: number) => {
     try {
-      console.log(`Attempting to delete task with ID: ${id}`);
-      
       const taskExists = tasks.some(task => task.id === id);
       if (!taskExists) {
         setError(`Tugas dengan ID ${id} tidak ditemukan`);
@@ -77,7 +73,6 @@ const App: React.FC = () => {
       });
       
       if (res.status === 404) {
-        console.warn(`Task ${id} not found on server, removing from local state`);
         setTasks(tasks.filter(task => task.id !== id));
         return;
       }
@@ -87,9 +82,7 @@ const App: React.FC = () => {
         throw new Error(`Gagal menghapus tugas: ${res.status} ${res.statusText} - ${errorData.error || 'Error server'}`);
       }
       
-      const result = await res.json();
-      console.log('Penghapusan berhasil:', result);
-
+      await res.json();
       setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
       
     } catch (error) {
