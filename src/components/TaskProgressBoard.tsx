@@ -6,6 +6,7 @@ type Props = {
   updateProgress: (id: number, progress: string) => Promise<void>;
   addTask: (task: Omit<Task, 'id'>) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
+  isDarkMode: boolean;
 };
 
 const progressStatuses = [
@@ -15,7 +16,7 @@ const progressStatuses = [
   "Completed"
 ];
 
-const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask }) => {
+const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask, isDarkMode }) => {
   const handleProgressNavigation = async (taskId: number, currentProgress: string, direction: string) => {
     const progressLevels = ["Not Started", "In Progress", "Waiting/In Review", "Completed"];
     const currentIndex = progressLevels.indexOf(currentProgress);
@@ -41,24 +42,26 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
       {progressStatuses.map(status => {
         const filteredTasks = tasks.filter(task => task.progress === status);
         return (
-          <div key={status} style={{
+            <div key={status} style={{
             flex: 1,
-            backgroundColor: '#a0f2d9',
+            backgroundColor: isDarkMode ? '#333' : '#a0f2d9',
             borderRadius: 8,
             padding: 10,
             minHeight: 200
           }}>
             <h4 style={{
-              color: '#00aa75',
-              borderBottom: '2px solid #00aa75',
+              color: isDarkMode ? '#ffffff' : '#00aa75',
+              borderBottom: isDarkMode ? '2px solid #ffffff' : '2px solid #00aa75',
               paddingBottom: 10,
               fontSize: '18px',
-              marginBottom: 15
+              marginBottom: 15,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
             }}>
-              {status}
+              <span>{status}</span>
               <button
                 style={{
-                  float: 'right',
                   backgroundColor: '#00a5cf',
                   color: 'white',
                   border: 'none',
@@ -66,6 +69,7 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                   cursor: 'pointer',
                   padding: '4px 10px',
                   fontSize: '16px',
+                  flexShrink: 0
                 }}
                 onClick={async () => {
                   const newTaskName = prompt(`New task name for '${status}':`);
@@ -84,11 +88,11 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
               >＋</button>
             </h4>
             {filteredTasks.length === 0 && (
-              <p style={{ fontStyle: 'italic', color: '#004c3f', fontSize: '16px' }}>No tasks</p>
+              <p style={{ fontStyle: 'italic', color: isDarkMode ? '#ffffff' : '#0f172a', fontSize: '16px' }}>No tasks</p>
             )}
             {filteredTasks.map(task => (
               <div key={task.id} style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: isDarkMode ? 'rgba(30, 41, 59)' : 'rgba(255, 255, 255, 0.7)',
                 borderRadius: 8,
                 padding: 16,
                 marginBottom: 12,
@@ -103,7 +107,7 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         </svg>
                       </div>
                     )}
-                    <h5 style={{ margin: 0, color: '#00796b', fontSize: '16px' }}>
+                    <h5 style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#000000', fontSize: '16px' }}>
                       {task.taskName}
                     </h5>
                   </div>
@@ -123,10 +127,10 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     aria-label={`Delete task ${task.taskName}`}
                   >&times;</button>
                 </div>
-                <p style={{ fontSize: 14, margin: '0 0 6px 0' }}>
+                <p style={{ fontSize: 14, margin: '0 0 6px 0', color: isDarkMode ? '#ffffff' : '#000000' }}>
                   {task.detail || 'No details provided'}
                 </p>
-                <p style={{ fontSize: 12, margin: 0, color: '#004c3f' }}>
+                <p style={{ fontSize: 12, margin: 0, color: isDarkMode ? '#ffffff' : '#000000' }}>
                   Due on {task.dueDate}
                 </p>
                 
@@ -146,7 +150,7 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                   >
                     {'<'}
                   </button>
-                  <span style={{ fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 'bold', textAlign: 'center', color: isDarkMode ? '#ffffff' : '#000000' }}>
                     {task.progress}
                   </span>
                   <button

@@ -12,36 +12,38 @@ const Summary: React.FC<Props> = ({ tasks, setView }) => {
 
   return (
     <section>
-      <h2 style={{ color: '#1abc9c', fontSize: 32, fontWeight: 700, marginBottom: 24 }}>Summary of Your Tasks</h2>
+     <h2 style={{ color: '#1abc9c', fontSize: '28px', fontWeight: 700, marginBottom: 24 }}>Summary of Your Tasks</h2>
       <div style={{
-        width: '600px',
+        width: '100%',
+        maxWidth: '650px',
         margin: '10px 0 20px 0',
-        padding: 25,
+        padding: '20px',
         color: 'white',
         backgroundColor: '#44cea2',
         fontWeight: 600,
         borderRadius: 7,
-        fontSize: 22,
+        fontSize: '18px',
         display: 'flex',
         alignItems: 'center'
       }}>
-        <span style={{ fontSize: 26, marginRight: 12 }}>✓</span>
+        <span style={{ fontSize: '22px', marginRight: '12px' }}>✓</span>
         You have completed {completedCount} task{completedCount !== 1 ? 's' : ''}
       </div>
       <div style={{
-        width: '600px',
+        width: '100%',
+        maxWidth: '650px',
         margin: '10px 0 20px 0',
-        padding: 25,
+        padding: '20px',
         color: 'white',
         backgroundColor: '#44cea2',
         opacity: 0.92,
         fontWeight: 600,
         borderRadius: 7,
-        fontSize: 22,
+        fontSize: '18px',
         display: 'flex',
         alignItems: 'center'
       }}>
-        <span style={{ fontSize: 26, marginRight: 12 }}>☰</span>
+        <span style={{ fontSize: '22px', marginRight: '12px' }}>☰</span>
         You still have {remainingCount} task{remainingCount !== 1 ? 's' : ''} left
       </div>
 
