@@ -7,11 +7,12 @@ type Props = {
   updateProgress: (id: number, progress: string) => Promise<void>;
   addTask: (task: Omit<Task, 'id'>) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
+  isDarkMode: boolean;
 };
 
 type FilterType = 'all' | 'completed' | 'uncompleted';
 
-const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask }) => {
+const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask, isDarkMode }) => {
   const [showForm, setShowForm] = useState(false);
   
   // State untuk formulir tugas baru
@@ -45,19 +46,31 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
 
   const handleAddTask = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validasi input
     if (!taskName || !taskName.trim()) {
-      alert('Task Name is required');
+      alert('Nama Task harus diisi');
       return;
     }
     if (!dueDate || !dueDate.trim()) {
-      alert('Due Date is required');
+      alert('Tanggal Jatuh Tempo harus diisi');
       return;
     }
 
     // Validasi format tanggal
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(dueDate)) {
-      alert("Please enter a valid date in YYYY-MM-DD format.");
+      alert("Mohon masukkan format tanggal yang valid (YYYY-MM-DD).");
+      return;
+    }
+
+    // Validasi tanggal tidak boleh di masa lalu
+    const today = new Date();
+    const selectedDate = new Date(dueDate);
+    today.setHours(0, 0, 0, 0); // Reset waktu untuk perbandingan yang akurat
+    
+    if (selectedDate < today) {
+      alert("Tanggal jatuh tempo tidak boleh di masa lalu.");
       return;
     }
 
@@ -74,8 +87,9 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
       setDueDate('');
       setProgress('Not Started');
       setShowForm(false);
-    } catch {
-      alert("Failed to add task. Please try again.");
+    } catch (error) {
+      console.error("Error adding task:", error);
+      alert("Gagal menambahkan task. Pastikan server backend sedang berjalan.");
     }
   };
 
@@ -91,13 +105,13 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
 
   return (
     <section>
-      <h3 style={{ fontSize: '24px' }}>Your Tasks</h3>
+      <h3 style={{ fontSize: '24px', color: isDarkMode ? '#ffffff' : '#000000' }}>Your Tasks</h3>
       <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: '10px' }}>
         <button 
           onClick={() => setShowForm(prev => !prev)}
           style={{
-            backgroundColor: '#00a5cf',
-            color: 'white',
+            backgroundColor: 'var(--accent-primary)',
+            color: 'var(--text-inverse)',
             border: 'none',
             padding: '8px 15px',
             borderRadius: 3,
@@ -112,8 +126,9 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
           style={{
             padding: '8px 12px',
             borderRadius: 3,
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
+            border: '1px solid var(--border-primary)',
+            backgroundColor: 'var(--bg-secondary)',
+            color: 'var(--text-primary)',
             cursor: 'pointer',
             fontSize: '14px'
           }}
@@ -127,10 +142,10 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
         <form onSubmit={handleAddTask} style={{
           marginBottom: 20,
           padding: 15,
-          border: '1px solid #ccc',
+          border: '1px solid var(--border-primary)',
           borderRadius: 5,
           maxWidth: 400,
-          backgroundColor: '#f9f9f9'
+          backgroundColor: isDarkMode ? '#444' : 'var(--bg-secondary)'
         }}>
           <div style={{ marginBottom: 10 }}>
             <label>Task Name: <br />
@@ -174,39 +189,42 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
             </label>
           </div>
           <button type="submit" style={{
-            backgroundColor: '#00a5cf', color: 'white', border: 'none',
+            backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none',
             padding: '8px 15px', borderRadius: 3, cursor: 'pointer', marginRight: 10
           }}>Add Task</button>
           <button 
             type="button" 
             onClick={() => setShowForm(false)}
             style={{
-              backgroundColor: '#e0e0e0', color: '#333', border: '1px solid #ccc',
+              backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)',
               padding: '8px 15px', borderRadius: 3, cursor: 'pointer'
             }}
           >Cancel</button>
         </form>
       )}
-      <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <table style={{ borderCollapse: 'collapse', width: '100%', backgroundColor: isDarkMode ? '#333' : '#fff' }}>
         <thead>
           <tr>
-            <th style={{ textAlign: 'center', width: '50px', borderBottom: '2px solid #ccc', padding: 10 }}>Done</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: 10, fontSize: '18px' }}>Task Name</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: 10, fontSize: '18px' }}>Detail</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: 10, fontSize: '18px' }}>Due Date</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: 10, fontSize: '18px' }}>Progress</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid #ccc', padding: 10, fontSize: '18px' }}>Action</th>
+            <th style={{ textAlign: 'center', width: '50px', borderBottom: '2px solid var(--border-primary)', padding: 10 }}>Done</th>
+            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Task Name</th>
+            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Detail</th>
+            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Due Date</th>
+            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Progress</th>
+            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredTasks.map(task => (
-            <tr key={task.id} style={{ borderBottom: '1px solid #eee' }}>
-              <td style={{ padding: '8px 0', verticalAlign: 'middle', textAlign: 'center' }}>
-                <CheckmarkIcon
-                  completed={task.progress === 'Completed'}
-                  onClick={() => handleToggleComplete(task)}
-                />
-              </td>
+            <tr key={task.id} style={{ borderBottom: '1px solid var(--border-primary)' }}>
+                <td style={{ padding: '8px 0', verticalAlign: 'middle', textAlign: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+{/* Removed the display of "Done" and "Not Done" */}
+                    <CheckmarkIcon
+                      completed={task.progress === 'Completed'}
+                      onClick={() => handleToggleComplete(task)}
+                    />
+                  </div>
+                </td>
               <td style={{ padding: 8, fontSize: '16px' }}>{task.taskName}</td>
               <td style={{ padding: 8, fontSize: '16px' }}>{task.detail}</td>
               <td style={{ padding: 8, fontSize: '16px' }}>{task.dueDate}</td>
@@ -216,9 +234,9 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
                   <button 
                     onClick={() => handleUpdate(task)} 
                     style={{
-                      backgroundColor: '#00a5cf',
+                      backgroundColor: 'var(--accent-primary)',
                       border: 'none',
-                      color: 'white',
+                      color: '#ffffff',
                       padding: '5px 10px',
                       borderRadius: 3,
                       cursor: 'pointer'
@@ -229,9 +247,9 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask 
                   <button 
                     onClick={() => handleDelete(task.id)}
                     style={{
-                      backgroundColor: '#e53e3e',
+                      backgroundColor: 'var(--accent-error)',
                       border: 'none',
-                      color: 'white',
+                      color: '#ffffff',
                       padding: '5px 10px',
                       borderRadius: 3,
                       cursor: 'pointer'

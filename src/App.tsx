@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Summary from './components/Summary';
 import TaskList from './components/TaskList';
 import TaskProgressBoard from './components/TaskProgressBoard';
+import './styles/darkmode.css'; // Import CSS untuk dark mode
 
 // Definisi tipe task
 export type Task = {
@@ -15,13 +16,54 @@ export type Task = {
 
 type View = 'home' | 'taskList' | 'taskProgress';
 
-const apiUrl = 'http://localhost:5000/tasks';
+const apiUrl = 'http://localhost:5001/tasks';
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [view, setView] = useState<View>('home');
   const [error, setError] = useState<string | null>(null);
-  
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    // Check localStorage first, then system preference
+    const savedTheme = localStorage.getItem('darkMode');
+    if (savedTheme !== null) {
+      return JSON.parse(savedTheme);
+    }
+    // Check system preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  // Apply theme to document root dan localStorage
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDarkMode) {
+      root.classList.add('dark-theme');
+      root.classList.remove('light-theme');
+    } else {
+      root.classList.add('light-theme');
+      root.classList.remove('dark-theme');
+    }
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  // Enhanced toggle function
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev: boolean) => !prev);
+  };
+
+  // Load tasks on component mount
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Failed to fetch tasks');
+        const data = await res.json();
+        setTasks(data);
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+      }
+    };
+    loadTasks();
+  }, []);
 
   const updateProgress = async (id: number, progress: string) => {
     try {
@@ -34,7 +76,7 @@ const App: React.FC = () => {
       const updatedTask = await res.json();
       setTasks(tasks.map(task => (task.id === id ? updatedTask : task)));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update task';
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred while updating the task';
       setError(errorMessage);
       console.error("Error updating task:", error);
     }
@@ -99,33 +141,45 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar view={view} setView={setView} />
-      <main style={{ flexGrow: 1, padding: '20px', color: '#1a2930' }}>
-        {error ? (
-          <div style={{ color: 'red', padding: '20px', border: '1px solid red', borderRadius: '5px' }}>
+    <div className="app-container">
+      <Sidebar 
+        view={view} 
+        setView={setView} 
+        isDarkMode={isDarkMode} 
+        toggleDarkMode={toggleDarkMode}
+      />
+      <main className="main-content">
+        {error && (
+          <div className="error-message">
             <strong>Error:</strong> {error}
+            <button 
+              className="error-close"
+              onClick={() => setError(null)}
+              aria-label="Close error"
+            >
+              ×
+            </button>
           </div>
-        ) : (
-          <>
-            {view === 'home' && <Summary tasks={tasks} setView={setView} />}
-            {view === 'taskList' && (
-              <TaskList 
-                tasks={tasks} 
-                updateProgress={updateProgress} 
-                addTask={addTask} 
-                deleteTask={deleteTask}
-              />
-            )}
-            {view === 'taskProgress' && (
-              <TaskProgressBoard 
-                tasks={tasks} 
-                updateProgress={updateProgress} 
-                addTask={addTask}
-                deleteTask={deleteTask}
-              />
-            )}
-          </>
+        )}
+        
+        {view === 'home' && <Summary tasks={tasks} setView={setView} />}
+        {view === 'taskList' && (
+          <TaskList 
+            tasks={tasks} 
+            updateProgress={updateProgress} 
+            addTask={addTask} 
+            deleteTask={deleteTask}
+            isDarkMode={isDarkMode}
+          />
+        )}
+        {view === 'taskProgress' && (
+          <TaskProgressBoard 
+            tasks={tasks} 
+            updateProgress={updateProgress} 
+            addTask={addTask}
+            deleteTask={deleteTask}
+            isDarkMode={isDarkMode}
+          />
         )}
       </main>
     </div>
