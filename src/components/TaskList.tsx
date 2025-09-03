@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import type { Task } from '../App';
 import CheckmarkIcon from './CheckmarkIcon';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from './ui/select';
 
 type Props = {
   tasks: Task[];
@@ -120,23 +127,131 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
         >
           {showForm ? 'Cancel' : '+ Add task'}
         </button>
-        <select 
-          value={filter} 
-          onChange={(e) => setFilter(e.target.value as FilterType)}
-          style={{
-            padding: '8px 12px',
-            borderRadius: 3,
-            border: '1px solid var(--border-primary)',
-            backgroundColor: 'var(--bg-secondary)',
-            color: 'var(--text-primary)',
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}
-        >
-          <option value="all">All Tasks</option>
-          <option value="completed">Completed Tasks</option>
-          <option value="uncompleted">Uncompleted Tasks</option>
-        </select>
+        <Select value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
+          <SelectTrigger
+            className="w-[180px]"
+            style={{
+              backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff',
+              color: isDarkMode ? '#ffffff' : '#000000',
+              border: isDarkMode ? '1px solid #404040' : '1px solid #d1d5db',
+              borderRadius: '6px',
+              padding: '8px 12px',
+              fontSize: '14px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            <SelectValue placeholder="Select a filter" />
+          </SelectTrigger>
+          <SelectContent
+            style={{
+              backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff',
+              border: isDarkMode ? '1px solid #404040' : '1px solid #d1d5db',
+              borderRadius: '6px',
+              boxShadow: isDarkMode ? '0 4px 12px rgba(0, 0, 0, 0.5)' : '0 4px 12px rgba(0, 0, 0, 0.15)',
+              minWidth: '180px'
+            }}
+          >
+            <SelectItem
+              value="all"
+              style={{
+                color: isDarkMode ? '#ffffff' : '#000000',
+                backgroundColor: 'transparent',
+                padding: '8px 12px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderRadius: '4px',
+                margin: '2px 6px'
+              }}
+              className={isDarkMode 
+                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
+                : "hover:bg-gray-300 focus:bg-gray-300 hover:shadow-md hover:transform hover:scale-[1.02]"
+              }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = isDarkMode 
+                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
+                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              All Tasks
+            </SelectItem>
+            <SelectItem
+              value="completed"
+              style={{
+                color: isDarkMode ? '#ffffff' : '#000000',
+                backgroundColor: 'transparent',
+                padding: '8px 12px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderRadius: '4px',
+                margin: '2px 4px'
+              }}
+              className={isDarkMode 
+                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
+                : "hover:bg-gray-200 focus:bg-gray-200 hover:shadow-md hover:transform hover:scale-[1.02]"
+              }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = isDarkMode 
+                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
+                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Completed Tasks
+            </SelectItem>
+            <SelectItem
+              value="uncompleted"
+              style={{
+                color: isDarkMode ? '#ffffff' : '#000000',
+                backgroundColor: 'transparent',
+                padding: '8px 12px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderRadius: '4px',
+                margin: '2px 4px'
+              }}
+              className={isDarkMode 
+                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
+                : "hover:bg-gray-200 focus:bg-gray-200 hover:shadow-md hover:transform hover:scale-[1.02]"
+              }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
+                e.currentTarget.style.boxShadow = isDarkMode 
+                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
+                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Uncompleted Tasks
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       {showForm && (
         <form onSubmit={handleAddTask} style={{
@@ -218,7 +333,6 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
             <tr key={task.id} style={{ borderBottom: '1px solid var(--border-primary)' }}>
                 <td style={{ padding: '8px 0', verticalAlign: 'middle', textAlign: 'center' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-{/* Removed the display of "Done" and "Not Done" */}
                     <CheckmarkIcon
                       completed={task.progress === 'Completed'}
                       onClick={() => handleToggleComplete(task)}
