@@ -4,6 +4,7 @@ import Summary from './components/Summary';
 import TaskList from './components/TaskList';
 import TaskProgressBoard from './components/TaskProgressBoard';
 import './styles/darkmode.css'; // Import CSS untuk dark mode
+import './index.css';
 
 // Definisi tipe task
 export type Task = {

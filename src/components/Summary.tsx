@@ -12,69 +12,32 @@ const Summary: React.FC<Props> = ({ tasks, setView }) => {
 
   return (
     <section>
-     <h2 style={{ color: '#1abc9c', fontSize: '28px', fontWeight: 700, marginBottom: 24 }}>Summary of Your Tasks</h2>
-      <div style={{
-        width: '100%',
-        maxWidth: '650px',
-        margin: '10px 0 20px 0',
-        padding: '20px',
-        color: 'white',
-        backgroundColor: '#44cea2',
-        fontWeight: 600,
-        borderRadius: 7,
-        fontSize: '18px',
-        display: 'flex',
-        alignItems: 'center'
-      }}>
-        <span style={{ fontSize: '22px', marginRight: '12px' }}>✓</span>
+     <h2 className="text-teal-400 text-2xl font-bold mb-8">Summary of Your Tasks</h2>
+      
+      {/* First task summary card */}
+      <div className="w-full max-w-3xl mt-8 mb-8 p-12 text-white bg-teal-500 rounded-lg font-bold text-4xl flex items-center">
+        <span className="text-6xl mr-6">✓</span>
         You have completed {completedCount} task{completedCount !== 1 ? 's' : ''}
       </div>
-      <div style={{
-        width: '100%',
-        maxWidth: '650px',
-        margin: '10px 0 20px 0',
-        padding: '20px',
-        color: 'white',
-        backgroundColor: '#44cea2',
-        opacity: 0.92,
-        fontWeight: 600,
-        borderRadius: 7,
-        fontSize: '18px',
-        display: 'flex',
-        alignItems: 'center'
-      }}>
-        <span style={{ fontSize: '22px', marginRight: '12px' }}>☰</span>
-        You still have {remainingCount} task{remainingCount !== 1 ? 's' : ''} left
+
+      {/* Second task summary card with button positioned below right side */}
+      <div className="w-full max-w-3xl">
+        <div className="mt-8 mb-8 p-12 text-white bg-teal-500 bg-opacity-90 rounded-lg font-bold text-4xl flex items-center">
+          <span className="text-6xl mr-6">☰</span>
+          You still have {remainingCount} task{remainingCount !== 1 ? 's' : ''} left
+        </div>
       </div>
 
-      {/* Tombol-tombol seperti di gambar */}
-      <div style={{ display: 'flex', gap: 28, marginTop: 28 ,}}>
+      {/* Buttons below with proper spacing */}
+      <div className="w-full max-w-3xl flex justify-between items-start mt-8">
         <button
-          style={{
-            backgroundColor: '#00a5cf',
-            color: 'white',
-            fontWeight: 600,
-            fontSize: 22,
-            padding: '16px 32px',
-            border: 'none',
-            borderRadius: 10,
-            cursor: 'pointer',
-            marginRight: 10
-          }}
-          onClick={() => setView('taskList')}
-        >See Your Task List</button>
-        <button
-          style={{
-            backgroundColor: '#00a5cf',
-            color: 'white',
-            fontWeight: 600,
-            fontSize: 22,
-            padding: '16px 32px',
-            border: 'none',
-            borderRadius: 10,
-            cursor: 'pointer'
-          }}
+          className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
           onClick={() => setView('taskProgress')}
+        >See Your Task List</button>
+        
+        <button
+          className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
+          onClick={() => setView('taskList')}
         >Manage Your Task Progress</button>
       </div>
     </section>
