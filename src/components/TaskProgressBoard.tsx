@@ -38,39 +38,15 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
   };
 
   return (
-    <div style={{ display: 'flex', gap: 16, paddingTop: 20 }}>
+    <div className="flex gap-4 pt-5">
       {progressStatuses.map(status => {
         const filteredTasks = tasks.filter(task => task.progress === status);
         return (
-            <div key={status} style={{
-            flex: 1,
-            backgroundColor: isDarkMode ? '#333' : '#a0f2d9',
-            borderRadius: 8,
-            padding: 10,
-            minHeight: 200
-          }}>
-            <h4 style={{
-              color: isDarkMode ? '#ffffff' : '#00aa75',
-              borderBottom: isDarkMode ? '2px solid #ffffff' : '2px solid #00aa75',
-              paddingBottom: 10,
-              fontSize: '18px',
-              marginBottom: 15,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
+            <div key={status} className="flex-1 rounded-lg p-2.5 min-h-[200px]" style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : '#a7f3d0' }}>
+            <h4 className={`pb-2.5 mb-4 text-lg flex justify-between items-center border-b-2 ${isDarkMode ? 'text-white border-white' : 'text-emerald-700 border-emerald-700'}`}>
               <span>{status}</span>
               <button
-                style={{
-                  backgroundColor: '#00a5cf',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 5,
-                  cursor: 'pointer',
-                  padding: '4px 10px',
-                  fontSize: '16px',
-                  flexShrink: 0
-                }}
+                className="bg-cyan-600 text-white border-none rounded cursor-pointer px-2.5 py-1 text-base flex-shrink-0 hover:bg-cyan-700 transition-colors"
                 onClick={async () => {
                   const newTaskName = prompt(`New task name for '${status}':`);
                   if (!newTaskName) return;
@@ -88,82 +64,51 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
               >＋</button>
             </h4>
             {filteredTasks.length === 0 && (
-              <p style={{ fontStyle: 'italic', color: isDarkMode ? '#ffffff' : '#0f172a', fontSize: '16px' }}>No tasks</p>
+              <p className={`italic text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No tasks</p>
             )}
             {filteredTasks.map(task => (
-              <div key={task.id} style={{
-                backgroundColor: isDarkMode ? 'rgba(30, 41, 59)' : 'rgba(255, 255, 255, 0.7)',
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 12,
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div key={task.id} className={`rounded-lg p-4 mb-3 shadow-md border-4 ${isDarkMode ? 'bg-slate-700' : 'bg-white/70'}`} style={{ borderColor: isDarkMode ? 'rgb(42, 42, 42)' : '#d1d5db' }}>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
                     {task.progress === 'Completed' && (
-                      <div style={{ color: '#28a745' }} title="Completed">
+                      <div className="text-green-600" title="Completed">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
                         </svg>
                       </div>
                     )}
-                    <h5 style={{ margin: 0, color: isDarkMode ? '#ffffff' : '#000000', fontSize: '16px' }}>
+                    <h5 className={`m-0 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>
                       {task.taskName}
                     </h5>
                   </div>
                   <button
                     onClick={() => handleDelete(task.id, task.taskName)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#e53e3e',
-                      cursor: 'pointer',
-                      fontSize: '20px',
-                      padding: '0 5px',
-                      lineHeight: '1',
-                      marginLeft: '8px'
-                    }}
+                    className="bg-none border-none text-red-600 cursor-pointer text-xl p-0 px-1.5 leading-none ml-2 hover:text-red-700 transition-colors"
                     title="Delete task"
                     aria-label={`Delete task ${task.taskName}`}
                   >&times;</button>
                 </div>
-                <p style={{ fontSize: 14, margin: '0 0 6px 0', color: isDarkMode ? '#ffffff' : '#000000' }}>
+                <p className={`text-sm m-0 mb-1.5 ${isDarkMode ? 'text-white' : 'text-black'}`}>
                   {task.detail || 'No details provided'}
                 </p>
-                <p style={{ fontSize: 12, margin: 0, color: isDarkMode ? '#ffffff' : '#000000' }}>
+                <p className={`text-xs m-0 ${isDarkMode ? 'text-white' : 'text-black'}`}>
                   Due on {task.dueDate}
                 </p>
-                
+
                 {/* Navigation buttons with centered progress text */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
+                <div className="flex justify-between items-center mt-2.5">
                   <button
                     onClick={() => handleProgressNavigation(task.id, task.progress, '<')}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#00a5cf',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 5,
-                      cursor: 'pointer',
-                      fontSize: '14px'
-                    }}
+                    className="px-10 py-4 bg-cyan-600 text-white border-none rounded cursor-pointer text-lg hover:bg-cyan-700 transition-colors"
                   >
                     {'<'}
                   </button>
-                  <span style={{ fontSize: '14px', fontWeight: 'bold', textAlign: 'center', color: isDarkMode ? '#ffffff' : '#000000' }}>
+                  <span className={`text-lg font-bold text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
                     {task.progress}
                   </span>
                   <button
                     onClick={() => handleProgressNavigation(task.id, task.progress, '>')}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: '#00a5cf',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: 5,
-                      cursor: 'pointer',
-                      fontSize: '14px'
-                    }}
+                    className="px-10 py-4 bg-cyan-600 text-white border-none rounded cursor-pointer text-lg hover:bg-cyan-700 transition-colors"
                   >
                     {'>'}
                   </button>

@@ -112,18 +112,11 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
 
   return (
     <section>
-      <h3 style={{ fontSize: '24px', color: isDarkMode ? '#ffffff' : '#000000' }}>Your Tasks</h3>
-      <div style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <button 
+      <h3 className={`text-xl mb-2.5 ${isDarkMode ? 'text-white' : 'text-black'}`}>Your Tasks</h3>
+      <div className="flex items-center gap-2.5 mb-2.5">
+        <button
           onClick={() => setShowForm(prev => !prev)}
-          style={{
-            backgroundColor: 'var(--accent-primary)',
-            color: 'var(--text-inverse)',
-            border: 'none',
-            padding: '8px 15px',
-            borderRadius: 3,
-            cursor: 'pointer'
-          }}
+          className="bg-blue-600 text-white border-none px-3.5 py-2 rounded cursor-pointer hover:bg-blue-700 transition-colors"
         >
           {showForm ? 'Cancel' : '+ Add task'}
         </button>
@@ -170,7 +163,7 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
                 margin: '2px 6px'
               }}
               className={isDarkMode 
-                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
+                ? "hover:bg-gray-60 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
                 : "hover:bg-gray-300 focus:bg-gray-300 hover:shadow-md hover:transform hover:scale-[1.02]"
               }
               onMouseEnter={(e) => {
@@ -254,48 +247,44 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
         </Select>
       </div>
       {showForm && (
-        <form onSubmit={handleAddTask} style={{
-          marginBottom: 20,
-          padding: 15,
-          border: '1px solid var(--border-primary)',
-          borderRadius: 5,
-          maxWidth: 400,
-          backgroundColor: isDarkMode ? '#444' : 'var(--bg-secondary)'
-        }}>
-          <div style={{ marginBottom: 10 }}>
-            <label>Task Name: <br />
+        <form onSubmit={handleAddTask} className={`mb-5 p-3.5 border rounded max-w-md ${isDarkMode ? 'border-gray-500' : 'bg-gray-100 border-gray-300'}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
+          <div className="mb-2.5">
+            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Task Name: <br />
               <input
                 type="text"
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
-                style={{ width: '100%', padding: 8, boxSizing: 'border-box' }}
+                className={`w-full p-2 box-border ${isDarkMode ? 'text-white' : ''}`}
+                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
                 required
               />
             </label>
           </div>
-          <div style={{ marginBottom: 10 }}>
-            <label>Detail: <br />
+          <div className="mb-2.5">
+            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Detail: <br />
               <textarea
                 value={detail}
                 onChange={(e) => setDetail(e.target.value)}
-                style={{ width: '100%', padding: 8, boxSizing: 'border-box', minHeight: '60px' }}
+                className={`w-full p-2 box-border min-h-[60px] ${isDarkMode ? 'text-white' : ''}`}
+                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
               />
             </label>
           </div>
-          <div style={{ marginBottom: 10 }}>
-            <label>Due Date: <br />
-              <input 
-                type="date" 
-                value={dueDate} 
-                onChange={(e) => setDueDate(e.target.value)} 
-                required 
-                style={{ width: '100%', padding: 8, boxSizing: 'border-box' }}
+          <div className="mb-2.5">
+            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Due Date: <br />
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                required
+                className={`w-full p-2 box-border ${isDarkMode ? 'text-white' : ''}`}
+                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
               />
             </label>
           </div>
-          <div style={{ marginBottom: 10 }}>
-            <label>Progress: <br />
-              <select value={progress} onChange={(e) => setProgress(e.target.value)} style={{width: '100%', padding: 8}}>
+          <div className="mb-2.5">
+            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Progress: <br />
+              <select value={progress} onChange={(e) => setProgress(e.target.value)} className={`w-full p-2 ${isDarkMode ? 'text-white' : ''}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
                 <option>Not Started</option>
                 <option>In Progress</option>
                 <option>Waiting/In Review</option>
@@ -303,71 +292,51 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
               </select>
             </label>
           </div>
-          <button type="submit" style={{
-            backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none',
-            padding: '8px 15px', borderRadius: 3, cursor: 'pointer', marginRight: 10
-          }}>Add Task</button>
-          <button 
-            type="button" 
+          <button type="submit" className="bg-blue-600 text-white border-none px-3.5 py-2 rounded cursor-pointer mr-2.5 hover:bg-blue-700 transition-colors">Add Task</button>
+          <button
+            type="button"
             onClick={() => setShowForm(false)}
-            style={{
-              backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-primary)',
-              padding: '8px 15px', borderRadius: 3, cursor: 'pointer'
-            }}
+            className={`px-3.5 py-2 rounded cursor-pointer border ${isDarkMode ? 'bg-gray-700 text-white border-gray-500' : 'bg-gray-200 text-black border-gray-300'} hover:bg-gray-300 transition-colors`}
           >Cancel</button>
         </form>
       )}
-      <table style={{ borderCollapse: 'collapse', width: '100%', backgroundColor: isDarkMode ? '#333' : '#fff' }}>
-        <thead>
+      <table className={`w-full border-collapse ${isDarkMode ? '' : 'bg-white'}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
+          <thead>
           <tr>
-            <th style={{ textAlign: 'center', width: '50px', borderBottom: '2px solid var(--border-primary)', padding: 10 }}>Done</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Task Name</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Detail</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Due Date</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Progress</th>
-            <th style={{ textAlign: 'left', borderBottom: '2px solid var(--border-primary)', padding: 10, fontSize: '18px' }}>Action</th>
+            <th className={`text-center w-[50px] border-b-2 border-gray-400 p-2.5 ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Done</th>
+            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Task Name</th>
+            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Detail</th>
+            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Due Date</th>
+            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Progress</th>
+            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredTasks.map(task => (
-            <tr key={task.id} style={{ borderBottom: '1px solid var(--border-primary)' }}>
-                <td style={{ padding: '8px 0', verticalAlign: 'middle', textAlign: 'center' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <tr key={task.id} className={`border-b border-gray-400 ${isDarkMode ? 'border-gray-500' : 'border-gray-400'}`}>
+                <td className="py-2 px-0 align-middle text-center">
+                  <div className="flex flex-col items-center">
                     <CheckmarkIcon
                       completed={task.progress === 'Completed'}
                       onClick={() => handleToggleComplete(task)}
                     />
                   </div>
                 </td>
-              <td style={{ padding: 8, fontSize: '16px' }}>{task.taskName}</td>
-              <td style={{ padding: 8, fontSize: '16px' }}>{task.detail}</td>
-              <td style={{ padding: 8, fontSize: '16px' }}>{task.dueDate}</td>
-              <td style={{ padding: 8, fontSize: '16px' }}>{task.progress}</td>
-              <td style={{ padding: 8, width: '150px' }}>
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  <button 
-                    onClick={() => handleUpdate(task)} 
-                    style={{
-                      backgroundColor: 'var(--accent-primary)',
-                      border: 'none',
-                      color: '#ffffff',
-                      padding: '5px 10px',
-                      borderRadius: 3,
-                      cursor: 'pointer'
-                    }}
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.taskName}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.detail}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.dueDate}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.progress}</td>
+              <td className="p-2 w-[150px]">
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => handleUpdate(task)}
+                    className="bg-blue-600 border-none text-white px-2.5 py-1.5 rounded cursor-pointer hover:bg-blue-700 transition-colors"
                   >
                     Update
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDelete(task.id)}
-                    style={{
-                      backgroundColor: 'var(--accent-error)',
-                      border: 'none',
-                      color: '#ffffff',
-                      padding: '5px 10px',
-                      borderRadius: 3,
-                      cursor: 'pointer'
-                    }}
+                    className="bg-red-600 border-none text-white px-2.5 py-1.5 rounded cursor-pointer hover:bg-red-700 transition-colors"
                   >
                     Delete
                   </button>

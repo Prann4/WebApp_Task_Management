@@ -23,48 +23,41 @@ const TaskForm: React.FC<Props> = ({ addTask, onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{
-      marginBottom: 20,
-      padding: 10,
-      border: '1px solid #ccc',
-      borderRadius: 5,
-      maxWidth: 400,
-      backgroundColor: '#f9f9f9'
-    }}>
-      <div style={{ marginBottom: 10 }}>
-        <label>Task Name: <br />
+    <form onSubmit={handleSubmit} className="mb-5 p-2.5 border border-gray-300 rounded max-w-md bg-gray-50">
+      <div className="mb-2.5">
+        <label className="block">Task Name: <br />
           <input
             type="text"
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
-            style={{ width: '100%', padding: 5 }}
+            className="w-full p-1.5 border border-gray-300 dark:border-gray-500"
             required
           />
         </label>
       </div>
-      <div style={{ marginBottom: 10 }}>
-        <label>Detail: <br />
+      <div className="mb-2.5">
+        <label className="block">Detail: <br />
           <textarea
             value={detail}
             onChange={(e) => setDetail(e.target.value)}
-            style={{ width: '100%', padding: 5 }}
+            className="w-full p-1.5 border border-gray-300 dark:border-gray-500"
           />
         </label>
       </div>
-      <div style={{ marginBottom: 10 }}>
-        <label>Due Date: <br />
-          <input 
-            type="date" 
-            value={dueDate} 
-            onChange={(e) => setDueDate(e.target.value)} 
-            required 
-            style={{ width: '100%', padding: 5 }}
+      <div className="mb-2.5">
+        <label className="block">Due Date: <br />
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            required
+            className="w-full p-1.5 border border-gray-300 dark:border-gray-500"
           />
         </label>
       </div>
-      <div style={{ marginBottom: 10 }}>
-        <label>Progress: <br />
-          <select value={progress} onChange={(e) => setProgress(e.target.value)} style={{width: '100%', padding: 5}}>
+      <div className="mb-2.5">
+        <label className="block">Progress: <br />
+          <select value={progress} onChange={(e) => setProgress(e.target.value)} className="w-full p-1.5 border border-gray-300 dark:border-gray-500">
             <option>Not Started</option>
             <option>In Progress</option>
             <option>Waiting/In Review</option>
@@ -72,26 +65,11 @@ const TaskForm: React.FC<Props> = ({ addTask, onClose }) => {
           </select>
         </label>
       </div>
-      <button type="submit" style={{
-        backgroundColor: '#00a5cf',
-        color: 'white',
-        border: 'none',
-        padding: '8px 15px',
-        borderRadius: 3,
-        cursor: 'pointer',
-        marginRight: 10
-      }}>Add Task</button>
-      <button 
-        type="button" 
+      <button type="submit" className="bg-cyan-600 text-white border-none px-3.5 py-2 rounded cursor-pointer mr-2.5 hover:bg-cyan-700 transition-colors">Add Task</button>
+      <button
+        type="button"
         onClick={onClose}
-        style={{
-          backgroundColor: '#cc0000',
-          color: 'white',
-          border: 'none',
-          padding: '8px 15px',
-          borderRadius: 3,
-          cursor: 'pointer'
-        }}
+        className="bg-red-600 text-white border-none px-3.5 py-2 rounded cursor-pointer hover:bg-red-700 transition-colors"
       >Cancel</button>
     </form>
   );
