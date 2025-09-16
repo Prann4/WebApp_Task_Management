@@ -32,12 +32,12 @@ const Summary: React.FC<Props> = ({ tasks, setView }) => {
       <div className="w-full max-w-3xl flex justify-between items-start mt-8">
         <button
           className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
-          onClick={() => setView('taskProgress')}
+          onClick={() => setView('taskList')}
         >See Your Task List</button>
-        
+
         <button
           className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
-          onClick={() => setView('taskList')}
+          onClick={() => setView('taskProgress')}
         >Manage Your Task Progress</button>
       </div>
     </section>
