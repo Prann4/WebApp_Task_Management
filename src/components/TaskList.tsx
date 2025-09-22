@@ -9,6 +9,8 @@ import {
   SelectItem,
 } from './ui/select';
 
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from './ui/card';
+
 type Props = {
   tasks: Task[];
   updateProgress: (id: number, progress: string) => Promise<void>;
@@ -56,11 +58,11 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
     
     // Validasi input
     if (!taskName || !taskName.trim()) {
-      alert('Nama Task harus diisi');
+      alert('Nama Task harus di isi');
       return;
     }
     if (!dueDate || !dueDate.trim()) {
-      alert('Tanggal Jatuh Tempo harus diisi');
+      alert('Tanggal Jatuh Tempo harus di isi');
       return;
     }
 
@@ -113,219 +115,235 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
   return (
     <section>
       <h3 className={`text-xl mb-2.5 ${isDarkMode ? 'text-white' : 'text-black'}`}>Your Tasks</h3>
-      <div className="flex items-center gap-2.5 mb-2.5">
+      
+      <div className="flex items-center gap-2.5 mb-6">
         <button
           onClick={() => setShowForm(prev => !prev)}
-          className="bg-blue-600 text-white border-none px-3.5 py-2 rounded cursor-pointer hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3.5 py-2 rounded-md h-10 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           {showForm ? 'Cancel' : '+ Add task'}
         </button>
         <Select value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
-          <SelectTrigger
-            className="w-[180px]"
-            style={{
-              backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff',
-              color: isDarkMode ? '#ffffff' : '#000000',
-              border: isDarkMode ? '1px solid #404040' : '1px solid #d1d5db',
-              borderRadius: '6px',
-              padding: '8px 12px',
-              fontSize: '14px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
-          >
+          <SelectTrigger className={`w-[180px] h-10 px-3 py-2 text-sm rounded-md border flex items-center justify-between ${
+            isDarkMode 
+              ? 'bg-[#2a2a2a] text-white border-[#404040]' 
+              : 'bg-white text-black border-gray-300'
+          }`}>
             <SelectValue placeholder="Select a filter" />
           </SelectTrigger>
-          <SelectContent
-            style={{
-              backgroundColor: isDarkMode ? '#2a2a2a' : '#ffffff',
-              border: isDarkMode ? '1px solid #404040' : '1px solid #d1d5db',
-              borderRadius: '6px',
-              boxShadow: isDarkMode ? '0 4px 12px rgba(0, 0, 0, 0.5)' : '0 4px 12px rgba(0, 0, 0, 0.15)',
-              minWidth: '180px'
-            }}
-          >
+          <SelectContent className={`min-w-[180px] rounded-md border shadow-lg ${
+            isDarkMode 
+              ? 'bg-[#2a2a2a] border-[#404040] shadow-black/50' 
+              : 'bg-white border-gray-300 shadow-black/15'
+          }`}>
             <SelectItem
               value="all"
-              style={{
-                color: isDarkMode ? '#ffffff' : '#000000',
-                backgroundColor: 'transparent',
-                padding: '8px 12px',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderRadius: '4px',
-                margin: '2px 6px'
-              }}
-              className={isDarkMode 
-                ? "hover:bg-gray-60 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
-                : "hover:bg-gray-300 focus:bg-gray-300 hover:shadow-md hover:transform hover:scale-[1.02]"
-              }
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = isDarkMode 
-                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
-                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
+              className={`px-3 py-2 mx-1.5 my-0.5 text-sm cursor-pointer rounded flex items-center justify-between transition-all duration-300 ease-out hover:translate-x-1 hover:scale-[1.02] hover:shadow-md bg-transparent ${
+                isDarkMode 
+                  ? 'text-white hover:bg-gray-600 focus:bg-gray-600 hover:shadow-black/30' 
+                  : 'text-black hover:bg-gray-200 focus:bg-gray-200 hover:shadow-black/10'
+              }`}
             >
               All Tasks
             </SelectItem>
             <SelectItem
               value="completed"
-              style={{
-                color: isDarkMode ? '#ffffff' : '#000000',
-                backgroundColor: 'transparent',
-                padding: '8px 12px',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderRadius: '4px',
-                margin: '2px 4px'
-              }}
-              className={isDarkMode 
-                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
-                : "hover:bg-gray-200 focus:bg-gray-200 hover:shadow-md hover:transform hover:scale-[1.02]"
-              }
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = isDarkMode 
-                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
-                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
+              className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded flex items-center justify-between transition-all duration-300 ease-out hover:translate-x-1 hover:scale-[1.02] hover:shadow-md bg-transparent ${
+                isDarkMode 
+                  ? 'text-white hover:bg-gray-600 focus:bg-gray-600 hover:shadow-black/30' 
+                  : 'text-black hover:bg-gray-200 focus:bg-gray-200 hover:shadow-black/10'
+              }`}
             >
               Completed Tasks
             </SelectItem>
             <SelectItem
               value="uncompleted"
-              style={{
-                color: isDarkMode ? '#ffffff' : '#000000',
-                backgroundColor: 'transparent',
-                padding: '8px 12px',
-                fontSize: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderRadius: '4px',
-                margin: '2px 4px'
-              }}
-              className={isDarkMode 
-                ? "hover:bg-gray-600 focus:bg-gray-600 hover:shadow-md hover:transform hover:scale-[1.02]" 
-                : "hover:bg-gray-200 focus:bg-gray-200 hover:shadow-md hover:transform hover:scale-[1.02]"
-              }
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateX(4px) scale(1.02)';
-                e.currentTarget.style.boxShadow = isDarkMode 
-                  ? '0 4px 8px rgba(0, 0, 0, 0.3)' 
-                  : '0 4px 8px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateX(0px) scale(1)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
+              className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded flex items-center justify-between transition-all duration-300 ease-out hover:translate-x-1 hover:scale-[1.02] hover:shadow-md bg-transparent ${
+                isDarkMode 
+                  ? 'text-white hover:bg-gray-600 focus:bg-gray-600 hover:shadow-black/30' 
+                  : 'text-black hover:bg-gray-200 focus:bg-gray-200 hover:shadow-black/10'
+              }`}
             >
               Uncompleted Tasks
             </SelectItem>
           </SelectContent>
         </Select>
       </div>
+
+      {/* Add Task Form with Card Design */}
       {showForm && (
-        <form onSubmit={handleAddTask} className={`mb-5 p-3.5 border rounded max-w-md ${isDarkMode ? 'border-gray-500' : 'bg-gray-100 border-gray-300'}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
-          <div className="mb-2.5">
-            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Task Name: <br />
-              <input
-                type="text"
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-                className={`w-full p-2 box-border ${isDarkMode ? 'text-white' : ''}`}
-                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
-                required
-              />
-            </label>
-          </div>
-          <div className="mb-2.5">
-            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Detail: <br />
-              <textarea
-                value={detail}
-                onChange={(e) => setDetail(e.target.value)}
-                className={`w-full p-2 box-border min-h-[60px] ${isDarkMode ? 'text-white' : ''}`}
-                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
-              />
-            </label>
-          </div>
-          <div className="mb-2.5">
-            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Due Date: <br />
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
-                className={`w-full p-2 box-border ${isDarkMode ? 'text-white' : ''}`}
-                style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}
-              />
-            </label>
-          </div>
-          <div className="mb-2.5">
-            <label className={`block ${isDarkMode ? 'text-white' : ''}`}>Progress: <br />
-              <select value={progress} onChange={(e) => setProgress(e.target.value)} className={`w-full p-2 ${isDarkMode ? 'text-white' : ''}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
-                <option>Not Started</option>
-                <option>In Progress</option>
-                <option>Waiting/In Review</option>
-                <option>Completed</option>
-              </select>
-            </label>
-          </div>
-          <button type="submit" className="bg-blue-600 text-white border-none px-3.5 py-2 rounded cursor-pointer mr-2.5 hover:bg-blue-700 transition-colors">Add Task</button>
-          <button
-            type="button"
-            onClick={() => setShowForm(false)}
-            className={`px-3.5 py-2 rounded cursor-pointer border ${isDarkMode ? 'bg-gray-700 text-white border-gray-500' : 'bg-gray-200 text-black border-gray-300'} hover:bg-gray-300 transition-colors`}
-          >Cancel</button>
-        </form>
+        <div className="mb-6">
+          <Card className={`max-w-md ${isDarkMode ? 'bg-[rgb(42,42,42)] border-gray-600' : 'bg-white border-gray-200'}`}>
+            <CardHeader className={isDarkMode ? 'bg-[rgb(42,42,42)]' : 'bg-white'}>
+              <CardTitle className={`${isDarkMode ? 'text-white' : 'text-black'}`}>Add New Task</CardTitle>
+            </CardHeader>
+            <CardContent className={isDarkMode ? 'bg-[rgb(42,42,42)]' : 'bg-white'}>
+              <form onSubmit={handleAddTask} className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                  }`}>
+                    Task Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    className={`w-full p-3 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      isDarkMode
+                        ? 'border-gray-600 bg-[rgb(42,42,42)] text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-800'
+                        : 'border-gray-300 bg-white text-black placeholder-gray-400 focus:border-blue-500 focus:ring-blue-200'
+                    }`}
+                    placeholder="Enter task name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                  }`}>
+                    Detail
+                  </label>
+                  <textarea
+                    value={detail}
+                    onChange={(e) => setDetail(e.target.value)}
+                    className={`w-full p-3 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 resize-vertical min-h-[80px] ${
+                      isDarkMode
+                        ? 'border-gray-600 bg-[rgb(42,42,42)] text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-800'
+                        : 'border-gray-300 bg-white text-black placeholder-gray-400 focus:border-blue-500 focus:ring-blue-200'
+                    }`}
+                    placeholder="Enter task details (optional)"
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                  }`}>
+                    Due Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    required
+                    className={`w-full p-3 rounded-md border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      isDarkMode
+                        ? 'border-gray-600 bg-[rgb(42,42,42)] text-white focus:border-blue-500 focus:ring-blue-800'
+                        : 'border-gray-300 bg-white text-black focus:border-blue-500 focus:ring-blue-200'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-900'
+                  }`}>
+                    Progress
+                  </label>
+                  <Select value={progress} onValueChange={(value) => setProgress(value)}>
+                    <SelectTrigger className={`w-full h-12 px-3 py-2 text-sm rounded-md border flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      isDarkMode 
+                        ? 'bg-[rgb(42,42,42)] text-white border-gray-600 focus:border-blue-500 focus:ring-blue-800' 
+                        : 'bg-white text-black border-gray-300 focus:border-blue-500 focus:ring-blue-200'
+                    }`}>
+                      <SelectValue placeholder="Select progress status" />
+                    </SelectTrigger>
+                    <SelectContent className={`min-w-full rounded-md border shadow-lg ${
+                      isDarkMode 
+                        ? 'bg-[#2a2a2a] border-gray-600 shadow-black/50' 
+                        : 'bg-white border-gray-300 shadow-black/15'
+                    }`}>
+                      <SelectItem
+                        value="Not Started"
+                        className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded transition-all duration-200 ease-out ${
+                          isDarkMode 
+                            ? 'text-white hover:bg-gray-600 focus:bg-gray-600' 
+                            : 'text-black hover:bg-gray-100 focus:bg-gray-100'
+                        }`}
+                      >
+                        Not Started
+                      </SelectItem>
+                      <SelectItem
+                        value="In Progress"
+                        className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded transition-all duration-200 ease-out ${
+                          isDarkMode 
+                            ? 'text-white hover:bg-gray-600 focus:bg-gray-600' 
+                            : 'text-black hover:bg-gray-100 focus:bg-gray-100'
+                        }`}
+                      >
+                        In Progress
+                      </SelectItem>
+                      <SelectItem
+                        value="Waiting/In Review"
+                        className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded transition-all duration-200 ease-out ${
+                          isDarkMode 
+                            ? 'text-white hover:bg-gray-600 focus:bg-gray-600' 
+                            : 'text-black hover:bg-gray-100 focus:bg-gray-100'
+                        }`}
+                      >
+                        Waiting/In Review
+                      </SelectItem>
+                      <SelectItem
+                        value="Completed"
+                        className={`px-3 py-2 mx-1 my-0.5 text-sm cursor-pointer rounded transition-all duration-200 ease-out ${
+                          isDarkMode 
+                            ? 'text-white hover:bg-gray-600 focus:bg-gray-600' 
+                            : 'text-black hover:bg-gray-100 focus:bg-gray-100' 
+                        }`}
+                      >
+                        Completed
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </form>
+            </CardContent>
+            <CardFooter className={isDarkMode ? 'bg-[rgb(42,42,42)]' : 'bg-white'}>
+              <button 
+                type="submit" 
+                onClick={handleAddTask}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Add Task
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForm(false)}
+                className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium px-4 py-2.5 rounded-md border border-gray-300 dark:border-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+            </CardFooter>
+          </Card>
+        </div>
       )}
-      <table className={`w-full border-collapse ${isDarkMode ? '' : 'bg-white'}`} style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : undefined }}>
-          <thead>
+
+      {/* Table with proper Tailwind classes for light/dark mode */}
+      <table className={`w-full border-collapse ${isDarkMode ? 'bg-[rgb(42,42,42)]' : 'bg-white'}`}>
+        <thead>
           <tr>
-            <th className={`text-center w-[50px] border-b-2 border-gray-400 p-2.5 ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Done</th>
-            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Task Name</th>
-            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Detail</th>
-            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Due Date</th>
-            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Progress</th>
-            <th className={`text-left border-b-2 border-gray-400 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400'}`}>Action</th>
+            <th className={`text-center w-[50px] border-b-2 p-2.5 ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Done</th>
+            <th className={`text-left border-b-2 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Task Name</th>
+            <th className={`text-left border-b-2 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Detail</th>
+            <th className={`text-left border-b-2 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Due Date</th>
+            <th className={`text-left border-b-2 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Progress</th>
+            <th className={`text-left border-b-2 p-2.5 text-lg ${isDarkMode ? 'border-gray-500 text-white' : 'border-gray-400 text-black'}`}>Action</th>
           </tr>
         </thead>
         <tbody>
           {filteredTasks.map(task => (
-            <tr key={task.id} className={`border-b border-gray-400 ${isDarkMode ? 'border-gray-500' : 'border-gray-400'}`}>
-                <td className="py-2 px-0 align-middle text-center">
-                  <div className="flex flex-col items-center">
-                    <CheckmarkIcon
-                      completed={task.progress === 'Completed'}
-                      onClick={() => handleToggleComplete(task)}
-                    />
-                  </div>
-                </td>
-              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.taskName}</td>
-              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.detail}</td>
-              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.dueDate}</td>
-              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : ''}`}>{task.progress}</td>
+            <tr key={task.id} className={`border-b ${isDarkMode ? 'border-gray-500' : 'border-gray-400'}`}>
+              <td className="py-2 px-0 align-middle text-center">
+                <div className="flex flex-col items-center">
+                  <CheckmarkIcon
+                    completed={task.progress === 'Completed'}
+                    onClick={() => handleToggleComplete(task)}
+                  />
+                </div>
+              </td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>{task.taskName}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>{task.detail}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>{task.dueDate}</td>
+              <td className={`p-2 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>{task.progress}</td>
               <td className="p-2 w-[150px]">
                 <div className="flex gap-1.5">
                   <button

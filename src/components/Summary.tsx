@@ -12,33 +12,37 @@ const Summary: React.FC<Props> = ({ tasks, setView }) => {
 
   return (
     <section>
-     <h2 className="text-teal-400 text-2xl font-bold mb-8">Summary of Your Tasks</h2>
-      
-      {/* First task summary card */}
-      <div className="w-full max-w-3xl mt-8 mb-8 p-12 text-white bg-teal-500 rounded-lg font-bold text-4xl flex items-center">
-        <span className="text-6xl mr-6">✓</span>
+      <h2 className="text-teal-400 text-2xl font-bold mb-8">Summary of Your Tasks</h2>
+
+      {/* First task summary card with margin bottom */}
+      <div className="w-full max-w-3xl !mb-6 p-10 text-white bg-teal-500 rounded-lg font-bold text-4xl flex items-center">
+        <span className="text-5xl mr-6">✓</span>
         You have completed {completedCount} task{completedCount !== 1 ? 's' : ''}
       </div>
 
-      {/* Second task summary card with button positioned below right side */}
-      <div className="w-full max-w-3xl">
-        <div className="mt-8 mb-8 p-12 text-white bg-teal-500 bg-opacity-90 rounded-lg font-bold text-4xl flex items-center">
-          <span className="text-6xl mr-6">☰</span>
+      {/* Second task summary card with margin bottom */}
+      <div className="w-full max-w-3xl !mb-8">
+        <div className="p-10 text-white bg-teal-500 bg-opacity-90 rounded-lg font-bold text-4xl flex items-center">
+          <span className="text-5xl mr-6">☰</span>
           You still have {remainingCount} task{remainingCount !== 1 ? 's' : ''} left
         </div>
       </div>
 
-      {/* Buttons below with proper spacing */}
-      <div className="w-full max-w-3xl flex justify-between items-start mt-8">
+      {/* Buttons below with horizontal gap */}
+      <div className="w-full max-w-3xl flex justify-between items-start !gap-x-6">
         <button
-          className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
+          className="bg-cyan-600 text-white font-semibold text-3xl px-20 py-2 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
           onClick={() => setView('taskList')}
-        >See Your Task List</button>
+        >
+          See Your Task List
+        </button>
 
         <button
-          className="bg-cyan-600 text-white font-semibold text-2xl px-8 py-4 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
+          className="bg-cyan-600 text-white font-semibold text-3xl px-20 py-2 border-none rounded-lg cursor-pointer hover:bg-cyan-700 transition-colors"
           onClick={() => setView('taskProgress')}
-        >Manage Your Task Progress</button>
+        >
+          Manage Your Task Progress
+        </button>
       </div>
     </section>
   );
