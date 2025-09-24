@@ -110,74 +110,8 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
   box-shadow: var(--shadow-sm);
-}
-
-.theme-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 14px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.theme-toggle:hover {
-  background-color: var(--bg-hover);
-}
-
-.toggle-track {
-  width: 80px;
-  height: 36px;
-  background-color: var(--border-secondary);
-  border-radius: 18px;
-  position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid var(--border-primary);
-}
-
-.dark-theme .toggle-track {
-  background-color: var(--accent-primary);
-}
-
-.toggle-thumb {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 28px;
-  height: 28px;
-  background-color: var(--bg-primary);
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.dark-theme .toggle-thumb {
-  transform: translateX(40px);
-}
-
-.toggle-icon {
-  font-size: 20px;
-  line-height: 1;
-  display: inline-block;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 1;
-}
-
-.toggle-icon.hidden {
-  opacity: 0;
-  transform: translate(-50%, -60%);
-  pointer-events: none;
 }
 
 .sidebar-header {
@@ -217,7 +151,7 @@ body {
 }
 
 .toggle-track {
-  width: 50px;
+  width: 52px;
   height: 26px;
   background-color: var(--border-secondary);
   border-radius: 13px;
@@ -246,11 +180,11 @@ body {
 }
 
 .dark-theme .toggle-thumb {
-  transform: translateX(22px);
+  transform: translateX(26px);
 }
 
 .toggle-icon {
-  font-size: 24px;
+  font-size: 16px;
   line-height: 1;
   display: inline-block;
   transition: opacity 0.5s ease, transform 0.5s ease;
@@ -263,7 +197,7 @@ body {
 
 .toggle-icon.hidden {
   opacity: 0;
-  transform: translate(-50%, -60%);
+  transform: translate(-50%, -50%) scale(0.5);
   pointer-events: none;
 }
 
@@ -638,3 +572,5 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border-secondary) var(--bg-secondary);
 }
+
+/* ===== DIALOG CLOSE BUTTON ===== */

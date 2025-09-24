@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Task } from '../App';
 import { Card, CardContent } from './ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './ui/dialog';
 
 type Props = {
   tasks: Task[];
@@ -12,12 +21,60 @@ type Props = {
 
 const progressStatuses = [
   "Not Started",
-  "In Progress",
+  "In Progress", 
   "Waiting/In Review",
   "Completed"
 ];
 
+// Define colors for each status
+const statusColors = {
+  "Not Started": {
+    light: { bg: '#fef3c7', border: '#f59e0b', text: '#92400e' }, // Yellow theme
+    dark: { bg: '#451a03', border: '#f59e0b', text: '#fbbf24' }
+  },
+  "In Progress": {
+    light: { bg: '#dbeafe', border: '#3b82f6', text: '#1d4ed8' }, // Blue theme
+    dark: { bg: '#081f61', border: '#3b82f6', text: '#93c5fd' }
+  },
+  "Waiting/In Review": {
+    light: { bg: '#fce7f3', border: '#ec4899', text: '#be185d' }, // Pink theme
+    dark: { bg: '#831843', border: '#ec4899', text: '#f9a8d4' }
+  },
+  "Completed": {
+    light: { bg: '#d1fae5', border: '#10b981', text: '#065f46' }, // Green theme
+    dark: { bg: '#064e3b', border: '#10b981', text: '#6ee7b7' }
+  }
+};
+
+// Card colors for each status
+const cardColors = {
+  "Not Started": {
+    light: { bg: '#fde68a', border: '#f59e0b' }, // Darker than column bg #fef3c7
+    dark: { bg: '#78350f', border: '#f59e0b' }    // Darker than column bg #451a03
+  },
+  "In Progress": {
+    light: { bg: '#bfdbfe', border: '#3b82f6' }, // Darker than column bg #dbeafe
+    dark: { bg: '#002796', border: '#3b82f6' }   // Darker than column bg #1e3a8a
+  },
+  "Waiting/In Review": {
+    light: { bg: '#f9a8d4', border: '#ec4899' }, // Darker than column bg #fce7f3
+    dark: { bg: '#be185d', border: '#ec4899' }   // Darker than column bg #831843
+  },
+  "Completed": {
+    light: { bg: '#a7f3d0', border: '#10b981' }, // Darker than column bg #d1fae5
+    dark: { bg: '#064e3b', border: '#10b981' }   // Same as you mentioned
+  }
+};
+
 const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask, isDarkMode }) => {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+  const [taskName, setTaskName] = useState('');
+  const [taskDetail, setTaskDetail] = useState('');
+  const [taskDueDate, setTaskDueDate] = useState('');
+
   const handleProgressNavigation = async (taskId: number, currentProgress: string, direction: string) => {
     const progressLevels = ["Not Started", "In Progress", "Waiting/In Review", "Completed"];
     const currentIndex = progressLevels.indexOf(currentProgress);
@@ -32,98 +89,459 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
     await updateProgress(taskId, progressLevels[newIndex]);
   };
 
-  const handleDelete = (id: number, taskName: string) => {
-    if (window.confirm(`Are you sure you want to delete the task "${taskName}"?`)) {
-      deleteTask(id);
+  const handleDelete = (task: Task) => {
+    setTaskToDelete(task);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (taskToDelete) {
+      deleteTask(taskToDelete.id);
+      setTaskToDelete(null);
+      setIsDeleteDialogOpen(false);
     }
   };
 
+  const handleAddTask = async () => {
+    if (!taskName || !taskDueDate) {
+      alert('Task Name and Due Date are required');
+      return;
+    }
+
+    await addTask({
+      taskName,
+      detail: taskDetail,
+      dueDate: taskDueDate,
+      progress: selectedStatus
+    });
+
+    // Reset form
+    setTaskName('');
+    setTaskDetail('');
+    setTaskDueDate('');
+    setIsAddDialogOpen(false);
+  };
+
+  const openAddTaskDialog = (status: string) => {
+    setSelectedStatus(status);
+    setIsAddDialogOpen(true);
+  };
+
+  const getStatusColors = (status: string) => {
+    const colors = statusColors[status as keyof typeof statusColors];
+    return isDarkMode ? colors.dark : colors.light;
+  };
+
+  const getCardColors = (status: string) => {
+    const colors = cardColors[status as keyof typeof cardColors];
+    return isDarkMode ? colors.dark : colors.light;
+  };
+
   return (
-    <>
-      <div className="flex gap-4 pt-5">
-        {progressStatuses.map(status => {
-          const filteredTasks = tasks.filter(task => task.progress === status);
-          return (
-            <div key={status} className="flex-1 rounded-lg p-2.5 min-h-[200px]" style={{ backgroundColor: isDarkMode ? 'rgb(42, 42, 42)' : '#a7f3d0' }}>
-              <h4 className={`pb-2.5 mb-4 text-lg flex justify-between items-center border-b-2 ${isDarkMode ? 'text-white border-white' : 'text-emerald-700 border-emerald-700'}`}>
-                <span>{status}</span>
-                <button
-                  className="bg-cyan-600 text-white border-none rounded cursor-pointer px-3 py-1 text-lg flex-shrink-0 hover:bg-cyan-700 transition-colors"
-                  onClick={async () => {
-                    const newTaskName = prompt(`New task name for '${status}':`);
-                    if (!newTaskName) return;
-
-                    const newTaskDetail = prompt("Detail (optional):") || '';
-                    const newTaskDueDate = prompt("Due Date (YYYY-MM-DD):");
-                    if (newTaskDueDate) {
-                      await addTask({ taskName: newTaskName, detail: newTaskDetail, dueDate: newTaskDueDate, progress: status });
-                    } else {
-                      alert("A due date is required to create a task.");
-                    }
-                  }}
-                  title="Add task"
-                  aria-label={`Add task to ${status}`}
-                >＋</button>
+    <div className="flex gap-6 pt-5 overflow-x-auto">
+      {progressStatuses.map(status => {
+        const filteredTasks = tasks.filter(task => task.progress === status);
+        const statusColor = getStatusColors(status);
+        
+        return (
+          <div 
+            key={status} 
+            className="flex-1 min-w-[280px] rounded-xl p-4 min-h-[300px] shadow-sm border"
+            style={{ 
+              backgroundColor: statusColor.bg,
+              borderColor: statusColor.border,
+              borderWidth: '2px'
+            }}
+          >
+            <div className="flex justify-between items-center mb-4 pb-3 border-b-2" 
+                 style={{ borderColor: statusColor.border }}>
+              <h4 className="text-lg font-semibold m-0" style={{ color: statusColor.text }}>
+                {status}
+                <span className="ml-2 text-sm font-normal opacity-75">
+                  ({filteredTasks.length})
+                </span>
               </h4>
-              {filteredTasks.length === 0 && (
-                <p className={`italic text-base ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>No tasks</p>
-              )}
-              {filteredTasks.map(task => (
-                <Card key={task.id} className="mb-3">
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        {task.progress === 'Completed' && (
-                          <div className="text-green-600" title="Completed">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
-                            </svg>
-                          </div>
-                        )}
-                        <h5 className={`m-0 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                          {task.taskName}
-                        </h5>
-                      </div>
-                      <button
-                        onClick={() => handleDelete(task.id, task.taskName)}
-                        className="bg-none border-none text-red-600 cursor-pointer text-xl p-0 px-1.5 leading-none ml-2 hover:text-red-700 transition-colors"
-                        title="Delete task"
-                        aria-label={`Delete task ${task.taskName}`}
-                      >&times;</button>
+              <Dialog open={isAddDialogOpen && selectedStatus === status} onOpenChange={setIsAddDialogOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    className="rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap min-w-[100px]"
+                    style={{
+                      backgroundColor: statusColor.border,
+                      color: 'white'
+                    }}
+                    onClick={() => openAddTaskDialog(status)}
+                    title="Add task"
+                    aria-label={`Add task to ${status}`}
+                  >
+                    ＋ Add Task
+                  </button>
+                </DialogTrigger>
+                <DialogContent 
+                  className="sm:max-w-[500px] border-2 shadow-xl"
+                  style={{
+                    backgroundColor: getStatusColors(status).bg,
+                    borderColor: getStatusColors(status).border,
+                  }}
+                >
+                  {/* Header with status color styling */}
+                  <DialogHeader className="pb-6 border-b-2" style={{ borderColor: getStatusColors(status).border }}>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div 
+                        className="w-4 h-4 rounded-full" 
+                        style={{ backgroundColor: getStatusColors(status).border }}
+                      ></div>
+                      <DialogTitle 
+                        className="text-xl font-bold"
+                        style={{ color: getStatusColors(status).text }}
+                      >
+                        Add New Task
+                      </DialogTitle>
                     </div>
-                    <p className={`text-sm m-0 mb-1.5 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                      {task.detail || 'No details provided'}
-                    </p>
-                    <p className={`text-xs m-0 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                      Due on {task.dueDate}
-                    </p>
+                    <DialogDescription 
+                      className="text-sm"
+                      style={{ color: getStatusColors(status).text, opacity: 0.8 }}
+                    >
+                      Create a new task for the <strong>"{status}"</strong> status. Fill in the details below.
+                    </DialogDescription>
+                  </DialogHeader>
 
-                    {/* Navigation buttons with centered progress text */}
-                    <div className="flex justify-between items-center mt-2.5">
-                      <button
-                        onClick={() => handleProgressNavigation(task.id, task.progress, '<')}
-                        className="px-2 py-1 bg-cyan-600 text-white border-none rounded cursor-pointer text-lg hover:bg-cyan-700 transition-colors"
+                  {/* Form with card-like styling */}
+                  <div 
+                    className="grid gap-6 py-6 px-1 rounded-lg"
+                    style={{ 
+                      backgroundColor: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)'
+                    }}
+                  >
+                    {/* Task Name Field */}
+                    <div className="space-y-2">
+                      <label 
+                        htmlFor="taskName" 
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
                       >
-                        {'<'}
-                      </button>
-                      <span className={`text-lg font-bold text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                        {task.progress}
-                      </span>
-                      <button
-                        onClick={() => handleProgressNavigation(task.id, task.progress, '>')}
-                        className="px-2 py-1 bg-cyan-600 text-white border-none rounded cursor-pointer text-lg hover:bg-cyan-700 transition-colors"
-                      >
-                        {'>'}
-                      </button>
+                        <div className="flex items-center gap-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                          </svg>
+                          Task Name *
+                        </div>
+                      </label>
+                      <input
+                        id="taskName"
+                        value={taskName}
+                        onChange={(e) => setTaskName(e.target.value)}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
+                        placeholder="Enter a descriptive task name..."
+                        required
+                      />
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+                    {/* Task Detail Field */}
+                    <div className="space-y-2">
+                      <label 
+                        htmlFor="taskDetail" 
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
+                            <path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"/>
+                          </svg>
+                          Task Details
+                        </div>
+                      </label>
+                      <textarea
+                        id="taskDetail"
+                        value={taskDetail}
+                        onChange={(e) => setTaskDetail(e.target.value)}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:scale-[1.02] focus:shadow-md resize-none"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
+                        placeholder="Describe the task requirements, goals, or additional information..."
+                        rows={4}
+                      />
+                    </div>
+
+                    {/* Due Date Field */}
+                    <div className="space-y-2">
+                      <label 
+                        htmlFor="taskDueDate" 
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                          </svg>
+                          Due Date *
+                        </div>
+                      </label>
+                      <input
+                        id="taskDueDate"
+                        type="date"
+                        value={taskDueDate}
+                        onChange={(e) => setTaskDueDate(e.target.value)}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <DialogFooter className="pt-6 border-t-2 gap-3" style={{ borderColor: getStatusColors(status).border }}>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddDialogOpen(false)}
+                      className="px-6 py-3 border-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                      style={{
+                        borderColor: getStatusColors(status).border,
+                        backgroundColor: 'transparent',
+                        color: getStatusColors(status).text
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddTask}
+                      className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-md text-white"
+                      style={{
+                        backgroundColor: getStatusColors(status).border
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+                        </svg>
+                        Add Task
+                      </div>
+                    </button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
-          );
-        })}
-      </div>
-    </>
+
+            <div className="space-y-3">
+              {filteredTasks.length === 0 && (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2 opacity-50">📝</div>
+                  <p className="text-sm opacity-75" style={{ color: statusColor.text }}>
+                    No tasks in this status
+                  </p>
+                </div>
+              )}
+              
+              {filteredTasks.map(task => {
+                const cardColor = getCardColors(status);
+                
+                return (
+                  <Card 
+                    key={task.id} 
+                    className="shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] border-2"
+                    style={{
+                      backgroundColor: cardColor.bg,
+                      borderColor: cardColor.border
+                    }}
+                  >
+                    <CardContent className="p-4">
+                      {/* Header with title and delete button */}
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-start gap-2 flex-1">
+                          {task.progress === 'Completed' && (
+                            <div className="text-green-600 mt-0.5 flex-shrink-0" title="Completed">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+                              </svg>
+                            </div>
+                          )}
+                          <h5 className="font-semibold text-base leading-tight break-words" 
+                              style={{ color: isDarkMode ? '#f1f5f9' : '#1e293b' }}>
+                            {task.taskName}
+                          </h5>
+                        </div>
+                        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                          <DialogTrigger asChild>
+                            <button
+                              onClick={() => handleDelete(task)}
+                              className={`ml-2 p-1 text-red-500 rounded transition-colors flex-shrink-0 ${
+                                isDarkMode 
+                                  ? 'hover:text-red-400 hover:bg-red-900/30' 
+                                  : 'hover:text-red-700 hover:bg-red-50'
+                              }`}
+                              title="Delete task"
+                              aria-label={`Delete task ${task.taskName}`}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                              </svg>
+                            </button>
+                          </DialogTrigger>
+                          <DialogContent 
+                            className="sm:max-w-[400px] border-2 shadow-xl"
+                            style={{
+                              backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                              borderColor: '#ef4444',
+                            }}
+                          >
+                            <DialogHeader className="pb-4 border-b-2" style={{ borderColor: '#ef4444' }}>
+                              <div className="flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-red-600">
+                                    <path d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>
+                                  </svg>
+                                </div>
+                                <DialogTitle 
+                                  className="text-xl font-bold text-red-600"
+                                >
+                                  Delete Task
+                                </DialogTitle>
+                              </div>
+                              <DialogDescription 
+                                className="text-sm"
+                                style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}
+                              >
+                                This action cannot be undone. The task will be permanently removed from your board.
+                              </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="py-4">
+                              <div 
+                                className="p-4 rounded-lg border-2 border-dashed"
+                                style={{ 
+                                  borderColor: '#ef4444',
+                                  backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)'
+                                }}
+                              >
+                                <div className="space-y-2">
+                                  <h4 
+                                    className="font-semibold text-base"
+                                    style={{ color: isDarkMode ? '#f9fafb' : '#111827' }}
+                                  >
+                                    {taskToDelete?.taskName}
+                                  </h4>
+                                  <p 
+                                    className="text-sm opacity-75"
+                                    style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}
+                                  >
+                                    {taskToDelete?.detail || 'No details provided'}
+                                  </p>
+                                  <div 
+                                    className="flex items-center gap-1 text-xs"
+                                    style={{ color: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                                  >
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
+                                      <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                                    </svg>
+                                    Due: {taskToDelete?.dueDate}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <DialogFooter className="pt-4 border-t-2 gap-3" style={{ borderColor: '#ef4444' }}>
+                              <button
+                                type="button"
+                                onClick={() => setIsDeleteDialogOpen(false)}
+                                className="px-6 py-3 border-2 border-gray-300 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                                style={{
+                                  backgroundColor: 'transparent',
+                                  color: isDarkMode ? '#d1d5db' : '#374151'
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="button"
+                                onClick={confirmDelete}
+                                className="px-6 py-3 bg-red-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 hover:bg-red-700 shadow-md"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                  </svg>
+                                  Delete Task
+                                </div>
+                              </button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+
+                      {/* Task details */}
+                      <div className="space-y-2 mb-4">
+                        <p className="text-sm leading-relaxed" 
+                           style={{ color: isDarkMode ? '#cbd5e1' : '#475569' }}>
+                          {task.detail || 'No details provided'}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs"
+                             style={{ color: isDarkMode ? '#94a3b8' : '#64748b' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                          </svg>
+                          Due: {task.dueDate}
+                        </div>
+                      </div>
+
+                      {/* Progress navigation */}
+                      <div className="flex items-center justify-between rounded-lg p-2"
+                           style={{
+                             backgroundColor: isDarkMode ? cardColor.border + '30' : 'rgba(255, 255, 255, 0.5)'
+                           }}>
+                        <button
+                          onClick={() => handleProgressNavigation(task.id, task.progress, '<')}
+                          disabled={task.progress === "Not Started"}
+                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                          style={{
+                            backgroundColor: task.progress === "Not Started" ? '#9ca3af' : statusColor.border,
+                            color: 'white'
+                          }}
+                        >
+                          ←
+                        </button>
+                        
+                        <span className="text-xs font-medium px-3 py-1 rounded-full"
+                              style={{ 
+                                backgroundColor: statusColor.border + '20',
+                                color: statusColor.text,
+                                border: `1px solid ${statusColor.border}40`
+                              }}>
+                          {task.progress}
+                        </span>
+                        
+                        <button
+                          onClick={() => handleProgressNavigation(task.id, task.progress, '>')}
+                          disabled={task.progress === "Completed"}
+                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                          style={{
+                            backgroundColor: task.progress === "Completed" ? '#9ca3af' : statusColor.border,
+                            color: 'white'
+          }}
+                        >
+                          →
+                        </button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

@@ -77,8 +77,8 @@ const Sidebar: React.FC<SidebarProps> = ({ view, setView, isDarkMode, toggleDark
           title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
         >
           <div className="toggle-track">
-          <div className="toggle-thumb">
-          </div>
+            <div className="toggle-thumb">
+            </div>
           </div>
         </button>
       </div>
