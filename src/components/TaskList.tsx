@@ -24,11 +24,12 @@ type Props = {
   addTask: (task: Omit<Task, 'id'>) => Promise<void>;
   deleteTask: (id: number) => Promise<void>;
   isDarkMode: boolean;
+  user: { id: number; username: string } | null;
 };
 
 type FilterType = 'all' | 'completed' | 'uncompleted';
 
-const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask, isDarkMode }) => {
+const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask, isDarkMode, user }) => {
   // State untuk dialog add task
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   
@@ -139,6 +140,14 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
     }
     return true;
   });
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-lg text-gray-500">Please log in to view tasks.</p>
+      </div>
+    );
+  }
 
   return (
     <section>
