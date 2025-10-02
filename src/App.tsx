@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Summary from './components/Summary';
 import TaskList from './components/TaskList';
 import TaskProgressBoard from './components/TaskProgressBoard';
-import AuthHeader from './components/AuthHeader';
+import Login from './components/Login';
 import './styles/darkmode.css'; // Import CSS untuk dark mode
 import './index.css';
 
@@ -32,7 +33,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string>('');
-
+  
   const login = async (username: string, password: string, isRegister: boolean) => {
     const endpoint = isRegister ? 'register' : 'login';
     const res = await fetch(`${authUrl}/${endpoint}`, {
@@ -48,24 +49,26 @@ const App: React.FC = () => {
     setToken(newToken);
     setUser(newUser);
     localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
     // Refetch tasks
     await loadTasks();
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
     setToken('');
     setTasks([]);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setError(null);
-  };
+  }, []);
 
-  const getHeaders = () => ({
+  const getHeaders = useCallback(() => ({
     'Content-Type': 'application/json',
     ...(token && { Authorization: `Bearer ${token}` }),
-  });
+  }), [token]);
 
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     if (!token) {
       setTasks([]);
       return;
@@ -85,7 +88,7 @@ const App: React.FC = () => {
         logout();
       }
     }
-  };
+  }, [token, logout, getHeaders]);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check localStorage first, then system preference
@@ -110,25 +113,28 @@ const App: React.FC = () => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
-  // Enhanced toggle function
+
   const toggleDarkMode = () => {
     setIsDarkMode((prev: boolean) => !prev);
   };
 
-  // Check for saved token on mount
+  // Check for saved token and user on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
     if (savedToken) {
       setToken(savedToken);
-      // User will be set later if token is valid
+    }
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
     }
   }, []);
 
   // Load tasks when token changes
   useEffect(() => {
     loadTasks();
-  }, [token]);
-
+  }, [loadTasks]);
+  
   const updateProgress = async (id: number, progress: string) => {
     try {
       const res = await fetch(`${apiUrl}/${id}`, {
@@ -203,51 +209,70 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
-      <AuthHeader user={user} login={login} logout={logout} />
-      <Sidebar
-        view={view}
-        setView={setView}
-        isDarkMode={isDarkMode}
-        toggleDarkMode={toggleDarkMode}
-      />
-      <main className="main-content">
-        {error && (
-          <div className="error-message">
-            <strong>Error:</strong> {error}
-            <button 
-              className="error-close"
-              onClick={() => setError(null)}
-              aria-label="Close error"
-            >
-              ×
-            </button>
-          </div>
-        )}
-        
-        {view === 'home' && <Summary tasks={tasks} setView={setView} />}
-        {view === 'taskList' && (
-          <TaskList
-            tasks={tasks}
-            updateProgress={updateProgress}
-            addTask={addTask}
-            deleteTask={deleteTask}
-            isDarkMode={isDarkMode}
-            user={user}
-          />
-        )}
-        {view === 'taskProgress' && (
-          <TaskProgressBoard
-            tasks={tasks}
-            updateProgress={updateProgress}
-            addTask={addTask}
-            deleteTask={deleteTask}
-            isDarkMode={isDarkMode}
-            user={user}
-          />
-        )}
-      </main>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" /> : <Login login={login} />}
+        />
+        <Route
+          path="/"
+          element={
+            user ? (
+              <div className="app-container">
+                {/* AuthHeader dihapus karena sudah dipindah ke Sidebar */}
+                <Sidebar
+                  view={view}
+                  setView={setView}
+                  isDarkMode={isDarkMode}
+                  toggleDarkMode={toggleDarkMode}
+                  user={user}
+                  logout={logout}
+                />
+                <main className="main-content">
+                  {error && (
+                    <div className="error-message">
+                      <strong>Error:</strong> {error}
+                      <button
+                        className="error-close"
+                        onClick={() => setError(null)}
+                        aria-label="Close error"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+
+                  {view === 'home' && <Summary tasks={tasks} setView={setView} />}
+                  {view === 'taskList' && (
+                    <TaskList
+                      tasks={tasks}
+                      updateProgress={updateProgress}
+                      addTask={addTask}
+                      deleteTask={deleteTask}
+                      isDarkMode={isDarkMode}
+                      user={user}
+                    />
+                  )}
+                  {view === 'taskProgress' && (
+                    <TaskProgressBoard
+                      tasks={tasks}
+                      updateProgress={updateProgress}
+                      addTask={addTask}
+                      deleteTask={deleteTask}
+                      isDarkMode={isDarkMode}
+                      user={user}
+                    />
+                  )}
+                </main>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+      </Routes>
+    </Router>
   );
 };
 
