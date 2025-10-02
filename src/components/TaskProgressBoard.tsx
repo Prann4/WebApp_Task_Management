@@ -30,40 +30,40 @@ const progressStatuses = [
 // Define colors for each status
 const statusColors = {
   "Not Started": {
-    light: { bg: 'bg-white', border: 'border-gray-600', text: 'text-gray-500' }, // Gray theme
-    dark: { bg: 'bg-slate-900', border: 'border-gray-600', text: 'text-gray-500' }
+    light: { bg: '#ffffff', border: '#3b3838', text: '#4d4b4b' }, // Gray theme
+    dark: { bg: '#0f172a', border: '#3b3838', text: '#7a7979' }
   },
   "In Progress": {
-    light: { bg: 'bg-white', border: 'border-blue-500', text: 'text-blue-800' }, // Blue theme
-    dark: { bg: 'bg-slate-900', border: 'border-blue-500', text: 'text-blue-300' }
+    light: { bg: '#ffffff', border: '#3b82f6', text: '#1d4ed8' }, // Blue theme
+    dark: { bg: '#0f172a', border: '#3b82f6', text: '#93c5fd' }
   },
   "Waiting/In Review": {
-    light: { bg: 'bg-white', border: 'border-yellow-500', text: 'text-yellow-500' }, // Yellow theme
-    dark: { bg: 'bg-slate-900', border: 'border-yellow-500', text: 'text-yellow-300' }
+    light: { bg: '#ffffff', border: '#f59e0b', text: '#92400e' }, // Yellow theme
+    dark: { bg: '#0f172a', border: '#f59e0b', text: '#fbbf24' }
   },
   "Completed": {
-    light: { bg: 'bg-white', border: 'border-green-500', text: 'text-green-700' }, // Green theme
-    dark: { bg: 'bg-slate-900', border: 'border-green-500', text: 'text-green-300' }
+    light: { bg: '#ffffff', border: '#10b981', text: '#065f46' }, // Green theme
+    dark: { bg: '#0f172a', border: '#10b981', text: '#6ee7b7' }
   }
 };
 
 // Card colors for each status
 const cardColors = {
   "Not Started": {
-    light: { bg: 'bg-white', border: 'border-gray-600' },
-    dark: { bg: 'bg-slate-900', border: 'border-gray-600' }
+    light: { bg: '#ffffff', border: '#3b3838' }, 
+    dark: { bg: '#0f172a', border: '#3b3838' }    
   },
   "In Progress": {
-    light: { bg: 'bg-white', border: 'border-blue-500' },
-    dark: { bg: 'bg-slate-900', border: 'border-blue-500' }
+    light: { bg: '#ffffff', border: '#3b82f6' }, 
+    dark: { bg: '#0f172a', border: '#3b82f6' }   
   },
   "Waiting/In Review": {
-    light: { bg: 'bg-white', border: 'border-yellow-500' },
-    dark: { bg: 'bg-slate-900', border: 'border-yellow-500' }
+    light: { bg: '#ffffff', border: '#f59e0b' }, 
+    dark: { bg: '#0f172a', border: '#f59e0b' }   
   },
   "Completed": {
-    light: { bg: 'bg-white', border: 'border-green-500' },
-    dark: { bg: 'bg-slate-900', border: 'border-green-500' }
+    light: { bg: '#ffffff', border: '#10b981' }, 
+    dark: { bg: '#0f172a', border: '#10b981' }  
   }
 };
 
@@ -155,10 +155,16 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
         return (
           <div 
             key={status} 
-            className={`flex-1 min-w-[280px] rounded-xl p-4 min-h-[300px] shadow-sm border-2 ${statusColor.bg} ${statusColor.border}`}
+            className="flex-1 min-w-[280px] rounded-xl p-4 min-h-[300px] shadow-sm border"
+            style={{ 
+              backgroundColor: statusColor.bg,
+              borderColor: statusColor.border,
+              borderWidth: '2px'
+            }}
           >
-            <div className={`flex justify-between items-center mb-4 pb-3 border-b-2 ${statusColor.border}`}>
-              <h4 className={`text-lg font-semibold m-0 ${statusColor.text}`}>
+            <div className="flex justify-between items-center mb-4 pb-3 border-b-2" 
+                 style={{ borderColor: statusColor.border }}>
+              <h4 className="text-lg font-semibold m-0" style={{ color: statusColor.text }}>
                 {status}
                 <span className="ml-2 text-sm font-normal opacity-75">
                   ({filteredTasks.length})
@@ -167,7 +173,11 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
               <Dialog open={isAddDialogOpen && selectedStatus === status} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <button
-                    className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap min-w-[100px] border-2 ${statusColor.border} ${statusColor.text}`}
+                    className="rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap min-w-[100px]"
+                    style={{
+                      backgroundColor: statusColor.border,
+                      color: 'white'
+                    }}
                     onClick={() => openAddTaskDialog(status)}
                     title="Add task"
                     aria-label={`Add task to ${status}`}
@@ -176,27 +186,34 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                   </button>
                 </DialogTrigger>
                 <DialogContent 
-                  className={`sm:max-w-[500px] border-2 shadow-xl ${statusColor.bg} ${statusColor.border}`}
+                  className="sm:max-w-[500px] border-2 shadow-xl"
+                  style={{
+                    backgroundColor: getStatusColors(status).bg,
+                    borderColor: getStatusColors(status).border,
+                  }}
                 >
                   {/* Header with status color styling */}
-                  <DialogHeader className={`pb-6 border-b-2 ${statusColor.border}`}>
+                  <DialogHeader className="pb-6 border-b-2" style={{ borderColor: getStatusColors(status).border }}>
                     <div className="flex items-center gap-3 mb-2">
                       <div 
-                        className={`w-4 h-4 rounded-full ${statusColor.border}`}
+                        className="w-4 h-4 rounded-full" 
+                        style={{ backgroundColor: getStatusColors(status).border }}
                       ></div>
                       <DialogTitle 
-                        className={`text-xl font-bold ${statusColor.text}`}
+                        className="text-xl font-bold"
+                        style={{ color: getStatusColors(status).text }}
                       >
                         Add New Task
                       </DialogTitle>
                     </div>
                     <DialogDescription 
-                      className={`text-sm ${statusColor.text} opacity-80`}
+                      className="text-sm"
+                      style={{ color: getStatusColors(status).text, opacity: 0.8 }}
                     >
                       Create a new task for the <strong>"{status}"</strong> status. Fill in the details below.
                     </DialogDescription>
                   </DialogHeader>
-  
+
                   {/* Form with card-like styling */}
                   <div 
                     className="grid gap-6 py-6 px-1 rounded-lg"
@@ -208,7 +225,8 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskName" 
-                        className={`block text-sm font-medium ${statusColor.text}`}
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
                       >
                         <div className="flex items-center gap-2">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
@@ -221,17 +239,23 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         id="taskName"
                         value={taskName}
                         onChange={(e) => setTaskName(e.target.value)}
-                        className={`w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md ${isDarkMode ? 'border-slate-600 bg-slate-800 text-slate-50' : 'border-gray-300 bg-white text-gray-900'}`}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
                         placeholder="Enter a descriptive task name..."
                         required
                       />
                     </div>
-  
+
                     {/* Task Detail Field */}
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskDetail" 
-                        className={`block text-sm font-medium ${statusColor.text}`}
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
                       >
                         <div className="flex items-center gap-2">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
@@ -244,17 +268,23 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         id="taskDetail"
                         value={taskDetail}
                         onChange={(e) => setTaskDetail(e.target.value)}
-                        className={`w-full border-2 rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:scale-[1.02] focus:shadow-md resize-none ${isDarkMode ? 'border-slate-600 bg-slate-800 text-slate-50' : 'border-gray-300 bg-white text-gray-900'}`}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm transition-all duration-200 focus:scale-[1.02] focus:shadow-md resize-none"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
                         placeholder="Describe the task requirements, goals, or additional information..."
                         rows={4}
                       />
                     </div>
-  
+
                     {/* Due Date Field */}
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskDueDate" 
-                        className={`block text-sm font-medium ${statusColor.text}`}
+                        className="block text-sm font-medium"
+                        style={{ color: getStatusColors(status).text }}
                       >
                         <div className="flex items-center gap-2">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-70">
@@ -268,25 +298,38 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         type="date"
                         value={taskDueDate}
                         onChange={(e) => setTaskDueDate(e.target.value)}
-                        className={`w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md ${isDarkMode ? 'border-slate-600 bg-slate-800 text-slate-50' : 'border-gray-300 bg-white text-gray-900'}`}
+                        className="w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md"
+                        style={{
+                          borderColor: getStatusColors(status).border,
+                          backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                          color: isDarkMode ? '#f9fafb' : '#111827'
+                        }}
                         required
                       />
                     </div>
                   </div>
-  
+
                   {/* Action Buttons */}
-                  <DialogFooter className={`pt-6 border-t-2 gap-3 ${statusColor.border}`}>
+                  <DialogFooter className="pt-6 border-t-2 gap-3" style={{ borderColor: getStatusColors(status).border }}>
                     <button
                       type="button"
                       onClick={() => setIsAddDialogOpen(false)}
-                      className={`px-6 py-3 border-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent ${statusColor.text} ${isDarkMode ? 'border-slate-600' : 'border-gray-300'}`}
+                      className="px-6 py-3 border-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                      style={{
+                        borderColor: getStatusColors(status).border,
+                        backgroundColor: 'transparent',
+                        color: getStatusColors(status).text
+                      }}
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleAddTask}
-                      className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-md text-white ${statusColor.border}`}
+                      className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-md text-white"
+                      style={{
+                        backgroundColor: getStatusColors(status).border
+                      }}
                     >
                       <div className="flex items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -314,9 +357,13 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                 const cardColor = getCardColors(status);
                 
                 return (
-                  <Card
-                    key={task.id}
-                    className={`shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] border-2 ${cardColor.bg} ${cardColor.border}`}
+                  <Card 
+                    key={task.id} 
+                    className="shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02] border-2"
+                    style={{
+                      backgroundColor: cardColor.bg,
+                      borderColor: cardColor.border
+                    }}
                   >
                     <CardContent className="p-4">
                       {/* Header with title and delete button */}
@@ -329,7 +376,8 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                               </svg>
                             </div>
                           )}
-                          <h5 className={`font-semibold text-base leading-tight break-words ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}`}>
+                          <h5 className="font-semibold text-base leading-tight break-words" 
+                              style={{ color: isDarkMode ? '#f1f5f9' : '#1e293b' }}>
                             {task.taskName}
                           </h5>
                         </div>
@@ -393,10 +441,16 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                                   >
                                     {taskToDelete?.taskName}
                                   </h4>
-                                  <p className={`text-sm opacity-75 ${isDarkMode ? 'text-slate-300' : 'text-slate-500'}`}>
+                                  <p 
+                                    className="text-sm opacity-75"
+                                    style={{ color: isDarkMode ? '#d1d5db' : '#6b7280' }}
+                                  >
                                     {taskToDelete?.detail || 'No details provided'}
                                   </p>
-                                  <div className={`flex items-center gap-1 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                  <div 
+                                    className="flex items-center gap-1 text-xs"
+                                    style={{ color: isDarkMode ? '#9ca3af' : '#6b7280' }}
+                                  >
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
                                       <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                                     </svg>
@@ -437,10 +491,12 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
 
                       {/* Task details */}
                       <div className="space-y-2 mb-4">
-                        <p className={`text-sm leading-relaxed ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}`}>
+                        <p className="text-sm leading-relaxed" 
+                           style={{ color: isDarkMode ? '#cbd5e1' : '#475569' }}>
                           {task.detail || 'No details provided'}
                         </p>
-                        <div className={`flex items-center gap-1 text-xs ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                        <div className="flex items-center gap-1 text-xs"
+                             style={{ color: isDarkMode ? '#94a3b8' : '#64748b' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="opacity-60">
                             <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                           </svg>

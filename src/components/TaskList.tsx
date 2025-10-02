@@ -294,7 +294,7 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
                       Progress Status
                     </div>
                   </label>
-                  <Select value={progress} onValueChange={(value) => setProgress(value)}>
+                  <Select value={progress} onValueChange={(value: string) => setProgress(value)}>
                     <SelectTrigger 
                       className="w-full border-2 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:scale-[1.02] focus:shadow-md flex items-center justify-between"
                       style={{
@@ -383,7 +383,7 @@ const TaskList: React.FC<Props> = ({ tasks, updateProgress, addTask, deleteTask,
             </form>
           </DialogContent>
         </Dialog>
-        <Select value={filter} onValueChange={(value) => setFilter(value as FilterType)}>
+        <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
           <SelectTrigger className={`w-[180px] h-10 px-3 py-2 text-sm rounded-md border flex items-center justify-between ${
             isDarkMode 
               ? 'bg-[#2a2a2a] text-white border-[#404040]' 
