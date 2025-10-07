@@ -1,21 +1,42 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-interface LoginProps {
-  login: (username: string, password: string) => Promise<void>;
+interface RegisterProps {
+  register: (username: string, password: string, email: string, fullName: string) => Promise<void>;
 }
 
-const Login: React.FC<LoginProps> = ({ login }) => {
+const Register: React.FC<RegisterProps> = ({ register }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
-      setError('Username and password are required');
+    // Validasi
+    if (!username || !password || !email || !fullName) {
+      setError('All fields are required');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    // Validasi email sederhana
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
       return;
     }
     
@@ -23,7 +44,7 @@ const Login: React.FC<LoginProps> = ({ login }) => {
     setError(null);
     
     try {
-      await login(username, password);
+      await register(username, password, email, fullName);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -44,8 +65,11 @@ const Login: React.FC<LoginProps> = ({ login }) => {
           </div>
           
           <h2 className="text-4xl font-bold text-black mb-2">
-            One Place for <span className="text-cyan-500">All Your Tasks</span>
+            Join <span className="text-cyan-500">TaskMate</span> Today
           </h2>
+          <p className="text-gray-600 mb-8">
+            Create your account and start organizing your tasks efficiently
+          </p>
           
           <div className="mt-16">
             <img
@@ -58,12 +82,12 @@ const Login: React.FC<LoginProps> = ({ login }) => {
         </div>
       </div>
 
-      {/* Right Side - Login Form */}
+      {/* Right Side - Register Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-black mb-2">Welcome Back</h2>
-            <p className="text-black">Login to access your tasks</p>
+            <h2 className="text-3xl font-bold text-black mb-2">Create Account</h2>
+            <p className="text-black">Fill in the details to get started</p>
           </div>
 
           {error && (
@@ -72,20 +96,47 @@ const Login: React.FC<LoginProps> = ({ login }) => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm text-black mb-2 font-medium">
-                Username or Email
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Enter your full name"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-black mb-2 font-medium">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-black mb-2 font-medium">
+                Username
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username or email"
+                placeholder="Choose a username"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">You can use either your username or email address</p>
             </div>
 
             <div>
@@ -96,19 +147,25 @@ const Login: React.FC<LoginProps> = ({ login }) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Create a password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                 required
               />
+              <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
             </div>
 
-            <div className="text-right">
-              <button 
-                type="button"
-                className="text-sm text-gray-600 hover:text-cyan-500 transition-colors"
-              >
-                Forgot password?
-              </button>
+            <div>
+              <label className="block text-sm text-black mb-2 font-medium">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                required
+              />
             </div>
 
             <button
@@ -122,25 +179,29 @@ const Login: React.FC<LoginProps> = ({ login }) => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Logging in...
+                  Creating Account...
                 </span>
               ) : (
-                'Login'
+                'Create Account'
               )}
             </button>
 
             <p className="text-center text-sm text-gray-700">
-              Don't have an account?{' '}
+              Already have an account?{' '}
               <Link
-                to="/register"
+                to="/login"
                 className="text-cyan-500 hover:text-cyan-600 hover:underline font-semibold transition-colors"
               >
-                Register
+                Login
               </Link>
             </p>
           </form>
 
-          <p className="text-center text-xs text-gray-500 mt-12">
+          <p className="text-center text-xs text-gray-500 mt-8">
+            By registering, you agree to our Terms of Service and Privacy Policy
+          </p>
+          
+          <p className="text-center text-xs text-gray-500 mt-4">
             ©2025 TaskMate. All rights reserved
           </p>
         </div>
@@ -149,4 +210,4 @@ const Login: React.FC<LoginProps> = ({ login }) => {
   );
 };
 
-export default Login;
+export default Register;

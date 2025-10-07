@@ -30,24 +30,23 @@ const progressStatuses = [
 // Define colors for each status
 const statusColors = {
   "Not Started": {
-    light: { bg: '#ffffff', border: '#3b3838', text: '#4d4b4b' }, // Gray theme
+    light: { bg: '#ffffff', border: '#3b3838', text: '#4d4b4b' },
     dark: { bg: '#0f172a', border: '#3b3838', text: '#7a7979' }
   },
   "In Progress": {
-    light: { bg: '#ffffff', border: '#3b82f6', text: '#1d4ed8' }, // Blue theme
+    light: { bg: '#ffffff', border: '#3b82f6', text: '#1d4ed8' },
     dark: { bg: '#0f172a', border: '#3b82f6', text: '#93c5fd' }
   },
   "Waiting/In Review": {
-    light: { bg: '#ffffff', border: '#f59e0b', text: '#92400e' }, // Yellow theme
+    light: { bg: '#ffffff', border: '#f59e0b', text: '#92400e' },
     dark: { bg: '#0f172a', border: '#f59e0b', text: '#fbbf24' }
   },
   "Completed": {
-    light: { bg: '#ffffff', border: '#10b981', text: '#065f46' }, // Green theme
+    light: { bg: '#ffffff', border: '#10b981', text: '#065f46' },
     dark: { bg: '#0f172a', border: '#10b981', text: '#6ee7b7' }
   }
 };
 
-// Card colors for each status
 const cardColors = {
   "Not Started": {
     light: { bg: '#ffffff', border: '#3b3838' }, 
@@ -116,7 +115,6 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
       progress: selectedStatus
     });
 
-    // Reset form
     setTaskName('');
     setTaskDetail('');
     setTaskDueDate('');
@@ -155,11 +153,10 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
         return (
           <div 
             key={status} 
-            className="flex-1 min-w-[280px] rounded-xl p-4 min-h-[300px] shadow-sm border"
+            className="flex-1 min-w-[280px] rounded-xl p-4 min-h-[300px] shadow-sm border-2"
             style={{ 
               backgroundColor: statusColor.bg,
-              borderColor: statusColor.border,
-              borderWidth: '2px'
+              borderColor: statusColor.border
             }}
           >
             <div className="flex justify-between items-center mb-4 pb-3 border-b-2" 
@@ -173,11 +170,8 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
               <Dialog open={isAddDialogOpen && selectedStatus === status} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <button
-                    className="rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap min-w-[100px]"
-                    style={{
-                      backgroundColor: statusColor.border,
-                      color: 'white'
-                    }}
+                    className="rounded-lg px-3 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm whitespace-nowrap min-w-[100px]"
+                    style={{ backgroundColor: statusColor.border }}
                     onClick={() => openAddTaskDialog(status)}
                     title="Add task"
                     aria-label={`Add task to ${status}`}
@@ -192,13 +186,12 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     borderColor: getStatusColors(status).border,
                   }}
                 >
-                  {/* Header with status color styling */}
                   <DialogHeader className="pb-6 border-b-2" style={{ borderColor: getStatusColors(status).border }}>
                     <div className="flex items-center gap-3 mb-2">
                       <div 
                         className="w-4 h-4 rounded-full" 
                         style={{ backgroundColor: getStatusColors(status).border }}
-                      ></div>
+                      />
                       <DialogTitle 
                         className="text-xl font-bold"
                         style={{ color: getStatusColors(status).text }}
@@ -214,14 +207,10 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     </DialogDescription>
                   </DialogHeader>
 
-                  {/* Form with card-like styling */}
                   <div 
                     className="grid gap-6 py-6 px-1 rounded-lg"
-                    style={{ 
-                      backgroundColor: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)'
-                    }}
+                    style={{ backgroundColor: isDarkMode ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.3)' }}
                   >
-                    {/* Task Name Field */}
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskName" 
@@ -250,7 +239,6 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                       />
                     </div>
 
-                    {/* Task Detail Field */}
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskDetail" 
@@ -279,7 +267,6 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                       />
                     </div>
 
-                    {/* Due Date Field */}
                     <div className="space-y-2">
                       <label 
                         htmlFor="taskDueDate" 
@@ -309,15 +296,13 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
                   <DialogFooter className="pt-6 border-t-2 gap-3" style={{ borderColor: getStatusColors(status).border }}>
                     <button
                       type="button"
                       onClick={() => setIsAddDialogOpen(false)}
-                      className="px-6 py-3 border-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95"
+                      className="px-6 py-3 border-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent"
                       style={{
                         borderColor: getStatusColors(status).border,
-                        backgroundColor: 'transparent',
                         color: getStatusColors(status).text
                       }}
                     >
@@ -326,10 +311,8 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     <button
                       type="button"
                       onClick={handleAddTask}
-                      className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 shadow-md text-white"
-                      style={{
-                        backgroundColor: getStatusColors(status).border
-                      }}
+                      className="px-6 py-3 rounded-lg font-medium text-white transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+                      style={{ backgroundColor: getStatusColors(status).border }}
                     >
                       <div className="flex items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -366,13 +349,12 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                     }}
                   >
                     <CardContent className="p-4">
-                      {/* Header with title and delete button */}
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-start gap-2 flex-1">
                           {task.progress === 'Completed' && (
                             <div className="text-green-600 mt-0.5 flex-shrink-0" title="Completed">
                               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                               </svg>
                             </div>
                           )}
@@ -405,16 +387,14 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                               borderColor: '#ef4444',
                             }}
                           >
-                            <DialogHeader className="pb-4 border-b-2" style={{ borderColor: '#ef4444' }}>
+                            <DialogHeader className="pb-4 border-b-2 border-red-500">
                               <div className="flex items-center gap-3 mb-2">
                                 <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                                   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-red-600">
                                     <path d="M12,2C17.53,2 22,6.47 22,12C22,17.53 17.53,22 12,22C6.47,22 2,17.53 2,12C2,6.47 6.47,2 12,2M15.59,7L12,10.59L8.41,7L7,8.41L10.59,12L7,15.59L8.41,17L12,13.41L15.59,17L17,15.59L13.41,12L17,8.41L15.59,7Z"/>
                                   </svg>
                                 </div>
-                                <DialogTitle 
-                                  className="text-xl font-bold text-red-600"
-                                >
+                                <DialogTitle className="text-xl font-bold text-red-600">
                                   Delete Task
                                 </DialogTitle>
                               </div>
@@ -428,11 +408,8 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
 
                             <div className="py-4">
                               <div 
-                                className="p-4 rounded-lg border-2 border-dashed"
-                                style={{ 
-                                  borderColor: '#ef4444',
-                                  backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)'
-                                }}
+                                className="p-4 rounded-lg border-2 border-dashed border-red-500"
+                                style={{ backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.1)' : 'rgba(239, 68, 68, 0.05)' }}
                               >
                                 <div className="space-y-2">
                                   <h4 
@@ -460,15 +437,12 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                               </div>
                             </div>
 
-                            <DialogFooter className="pt-4 border-t-2 gap-3" style={{ borderColor: '#ef4444' }}>
+                            <DialogFooter className="pt-4 border-t-2 border-red-500 gap-3">
                               <button
                                 type="button"
                                 onClick={() => setIsDeleteDialogOpen(false)}
-                                className="px-6 py-3 border-2 border-gray-300 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95"
-                                style={{
-                                  backgroundColor: 'transparent',
-                                  color: isDarkMode ? '#d1d5db' : '#374151'
-                                }}
+                                className="px-6 py-3 border-2 border-gray-300 rounded-lg font-medium transition-all duration-200 hover:scale-105 active:scale-95 bg-transparent"
+                                style={{ color: isDarkMode ? '#d1d5db' : '#374151' }}
                               >
                                 Cancel
                               </button>
@@ -489,7 +463,6 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         </Dialog>
                       </div>
 
-                      {/* Task details */}
                       <div className="space-y-2 mb-4">
                         <p className="text-sm leading-relaxed" 
                            style={{ color: isDarkMode ? '#cbd5e1' : '#475569' }}>
@@ -504,7 +477,6 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         </div>
                       </div>
 
-                      {/* Progress navigation */}
                       <div className="flex items-center justify-between rounded-lg p-2"
                            style={{
                              backgroundColor: isDarkMode ? cardColor.border + '30' : 'rgba(255, 255, 255, 0.5)'
@@ -512,10 +484,9 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         <button
                           onClick={() => handleProgressNavigation(task.id, task.progress, '<')}
                           disabled={task.progress === "Not Started"}
-                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                          className="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                           style={{
-                            backgroundColor: task.progress === "Not Started" ? '#9ca3af' : statusColor.border,
-                            color: 'white'
+                            backgroundColor: task.progress === "Not Started" ? '#9ca3af' : statusColor.border
                           }}
                         >
                           ←
@@ -533,11 +504,10 @@ const TaskProgressBoard: React.FC<Props> = ({ tasks, updateProgress, addTask, de
                         <button
                           onClick={() => handleProgressNavigation(task.id, task.progress, '>')}
                           disabled={task.progress === "Completed"}
-                          className="px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
+                          className="px-3 py-1.5 rounded-md text-sm font-medium text-white transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                           style={{
-                            backgroundColor: task.progress === "Completed" ? '#9ca3af' : statusColor.border,
-                            color: 'white'
-          }}
+                            backgroundColor: task.progress === "Completed" ? '#9ca3af' : statusColor.border
+                          }}
                         >
                           →
                         </button>

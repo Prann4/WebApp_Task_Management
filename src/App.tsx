@@ -5,10 +5,10 @@ import Summary from './components/Summary';
 import TaskList from './components/TaskList';
 import TaskProgressBoard from './components/TaskProgressBoard';
 import Login from './components/Login';
-import './styles/darkmode.css'; // Import CSS untuk dark mode
+import Register from './components/Register';
+import './styles/darkmode.css';
 import './index.css';
 
-// Definisi tipe task
 export type Task = {
   id: number;
   taskName: string;
@@ -22,6 +22,8 @@ type View = 'home' | 'taskList' | 'taskProgress';
 type User = {
   id: number;
   username: string;
+  email?: string;
+  fullName?: string;
 };
 
 const apiUrl = 'http://localhost:5001/tasks';
@@ -34,23 +36,43 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string>('');
   
-  const login = async (username: string, password: string, isRegister: boolean) => {
-    const endpoint = isRegister ? 'register' : 'login';
-    const res = await fetch(`${authUrl}/${endpoint}`, {
+  const login = async (usernameOrEmail: string, password: string) => {
+    const res = await fetch(`${authUrl}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username: usernameOrEmail, password }),
     });
+    
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-      throw new Error(errorData.error || `Failed to ${isRegister ? 'register' : 'login'}`);
+      throw new Error(errorData.error || 'Failed to login');
     }
+    
     const { token: newToken, user: newUser } = await res.json();
     setToken(newToken);
     setUser(newUser);
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
-    // Refetch tasks
+    await loadTasks();
+  };
+
+  const register = async (username: string, password: string, email: string, fullName: string) => {
+    const res = await fetch(`${authUrl}/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, email, fullName }),
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(errorData.error || 'Failed to register');
+    }
+    
+    const { token: newToken, user: newUser } = await res.json();
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
     await loadTasks();
   };
 
@@ -91,16 +113,13 @@ const App: React.FC = () => {
   }, [token, logout, getHeaders]);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check localStorage first, then system preference
     const savedTheme = localStorage.getItem('darkMode');
     if (savedTheme !== null) {
       return JSON.parse(savedTheme);
     }
-    // Check system preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
-  // Apply theme to document root dan localStorage
   useEffect(() => {
     const root = document.documentElement;
     if (isDarkMode) {
@@ -113,12 +132,10 @@ const App: React.FC = () => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
-
   const toggleDarkMode = () => {
     setIsDarkMode((prev: boolean) => !prev);
   };
 
-  // Check for saved token and user on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -130,7 +147,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Load tasks when token changes
   useEffect(() => {
     loadTasks();
   }, [loadTasks]);
@@ -216,11 +232,14 @@ const App: React.FC = () => {
           element={user ? <Navigate to="/" /> : <Login login={login} />}
         />
         <Route
+          path="/register"
+          element={user ? <Navigate to="/" /> : <Register register={register} />}
+        />
+        <Route
           path="/"
           element={
             user ? (
               <div className="app-container">
-                {/* AuthHeader dihapus karena sudah dipindah ke Sidebar */}
                 <Sidebar
                   view={view}
                   setView={setView}
